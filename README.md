@@ -44,7 +44,7 @@
    ```
    echo "GOOGLE_API_KEY=sua_chave_aqui" > python_final/.env
    ```
-3. Inicie todos os serviços Docker  
+3. Inicie todos os serviços Docker (apenas funciona em distribuição linux)
    ```
    ./dockerUp.sh edusearch
    ```

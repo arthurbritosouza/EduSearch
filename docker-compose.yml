@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  project_careca:
+  edusearch:
     build:  
       context: .
       dockerfile: Dockerfile
