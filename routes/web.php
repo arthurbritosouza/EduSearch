@@ -171,7 +171,7 @@ Route::group(['middleware' => ['auth']], function () {
         $name_topic = $request->input('name_topic');
         Topic_folder::where('id',$id_topic)->update(['name' => $name_topic]);
         return redirect()->back()->withSuccess('Nome alterado com sucesso!');
-    })->name('excluir_parceiro');
+    })->name('edit_topic');
 
     Route::get('/excluir_parceiro/{id_topic}/{id_parceiro}', function ($id_topic,$id_parceiro) {
         Relacione::where('id_topic',$id_topic)->where('id_parceiro',$id_parceiro)->delete();
