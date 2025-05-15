@@ -1,6 +1,7 @@
 # 🚀 EduSearch - Plataforma Inteligente de Estudos
 
 **EduSearch** é uma plataforma de estudos com IA generativa para orientação automatizada em tópicos educacionais. Desenvolvido como projeto semestral de ADS.
+![Tela de Login](public/tela_login.png)
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=flat&logo=laravel&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
