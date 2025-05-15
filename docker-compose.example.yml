@@ -1,0 +1,66 @@
+version: '3.8'
+services:
+  edusearch:
+    build:  
+      context: .
+      dockerfile: Dockerfile
+    container_name: edusearch
+    restart: always
+    ports:  
+      - "8078:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - API_ENDPOINT=http://api:8001
+    networks:
+      - edusearch_network
+
+  api:
+    build:
+      context: ./python_final
+      dockerfile: Dockerfile
+    container_name: api
+    restart: always
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./python_final:/var/www/html/api
+    environment:
+      - GOOGLE_API_KEY=<sua_api_key>
+    networks:
+      - edusearch_network
+
+  db:
+    image: mysql:8.0
+    container_name: edusearch_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 7877
+      MYSQL_DATABASE: edusearch
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - edusearch_network
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+    ports:
+      - "89:80"
+    networks:
+      - edusearch_network
+
+networks:
+  edusearch_network:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local
+      
