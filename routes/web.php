@@ -27,7 +27,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', function () {
         $user = Users::find(Auth::user()->id);
-
         $folders = Topic_folder::where('user_id', Auth::user()->id)->get();
 
         $relacionados = Topic_folder::join('relacione', 'topic_folder.id', '=', 'relacione.id_topic')
@@ -43,39 +42,53 @@ Route::group(['middleware' => ['auth']], function () {
 
         $data_topic = Topic_folder::leftJoin('relacione', 'topic_folder.id', '=', 'relacione.id_topic')
         ->where('topic_folder.id',$id)
-        ->where('topic_folder.user_id', Auth::user()->id)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('topic_folder.user_id', Auth::user()->id)
+		                ->orWhere('relacione.id_dono', Auth::user()->id)
+                        ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('topic_folder.*') 
+        ->distinct()
         ->first();
         
-            
         $exercises = Exercises::leftJoin('relacione','exercises.id_topic','=','relacione.id_topic')
-        ->where('exercises.user_id', Auth::user()->id)
         ->where('exercises.id_topic',$id)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('exercises.user_id', Auth::user()->id)
+		                ->orWhere('relacione.id_dono', Auth::user()->id)
+                        ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('exercises.*')
+        ->distinct()
         ->get();
 
         $materials = Material::leftJoin('relacione','material.id_topic','=','relacione.id_topic')
-        ->where('material.user_id', Auth::user()->id)
         ->where('material.id_topic',$id)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('material.user_id', Auth::user()->id)
+                    ->orWhere('relacione.id_dono', Auth::user()->id)
+                    ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('material.*')
+        ->distinct()
         ->get();        
 
         $anotacoes = Anotacao::leftJoin('relacione','anotacao.id_topic','=','relacione.id_topic')
-        ->where('anotacao.user_id', Auth::user()->id)
         ->where('anotacao.id_topic',$id)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('anotacao.user_id', Auth::user()->id)
+                    ->orWhere('relacione.id_dono', Auth::user()->id)
+                    ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('anotacao.*')
+        ->distinct()
         ->get();
-        // dd($anotacoes);
 
         $parceiros = Relacione::join('users', 'relacione.id_parceiro', '=', 'users.id')
         ->where('relacione.id_topic', $id)
         ->select('users.*')
+        ->distinct()
         ->get();
-        // dd($parceiros);
 
         $arrayEx = [];
         foreach ($exercises as $exercise) {
@@ -91,7 +104,6 @@ Route::group(['middleware' => ['auth']], function () {
         $textoFormatado = $converter->convertToHtml($data_topic->sobre);
         $topicFormatado = $converter->convertToHtml($data_topic->topics);
 
-        
         return view('topico', ['user' => $user,'texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
     })->name('topico');
 
@@ -99,27 +111,36 @@ Route::group(['middleware' => ['auth']], function () {
         $user = Users::find(Auth::user()->id);
 
         $data_material = Material::leftJoin('relacione','material.id_topic','=','relacione.id_topic')
-        ->where('material.user_id', Auth::user()->id)
-        ->where('material.id',$id_material)
         ->where('material.id_topic', $id_topic)
+        ->where('material.id',$id_material)
         ->where('material.level',$level)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('material.user_id', Auth::user()->id)
+                    ->orWhere('relacione.id_dono', Auth::user()->id)
+                    ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('material.*')
+        ->distinct()
         ->first();
 
-        // dd($data_material->id);
-
         $data_topic = Topic_folder::leftJoin('relacione', 'topic_folder.id', '=', 'relacione.id_topic')
-        ->where('topic_folder.user_id', Auth::user()->id)
         ->where('topic_folder.id',$id_topic)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('topic_folder.user_id', Auth::user()->id)
+                    ->orWhere('relacione.id_dono', Auth::user()->id)
+                    ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('topic_folder.*') 
+        ->distinct()
         ->first();
 
         $exercises = Exercises::leftJoin('relacione','exercises.id_topic','=','relacione.id_topic')
-        ->where('exercises.user_id', Auth::user()->id)
         ->where('exercises.id_topic',$id_topic)
-        ->orWhere('relacione.id_parceiro', Auth::user()->id)
+        ->where(function($query) {
+            $query->where('exercises.user_id', Auth::user()->id)
+                    ->orWhere('relacione.id_dono', Auth::user()->id)
+                    ->orWhere('relacione.id_parceiro', Auth::user()->id);
+        })
         ->select('exercises.*')
         ->get();
         
