@@ -127,7 +127,7 @@ class Controller extends BaseController
         $content = Http::timeout(120)->get($this->apiEndpoint.'/add_material/'.$data['name_topic'].'/'.$data['descricao'].'/'.$data['level']);
 
         if ($content->successful()){
-            $this->createMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
+            $this->addMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
             return redirect()->back()->withSuccess('Material adicionado com sucesso.');
         } else{
             return redirect()->back()->withErrors('Erro ao cadastrar Material.');
@@ -174,7 +174,8 @@ class Controller extends BaseController
         ]);
     }
 
-    public function relacione(Request $request){    
+    public function relacione(Request $request)
+    {    
         $data = $request->all();
         if(empty($data['email'])){
             return redirect()->back()->withErrors('Email do parceiro não pode ser vazio.');
@@ -191,7 +192,8 @@ class Controller extends BaseController
         return redirect()->back()->withSuccess('Parceria criada com sucesso.');
     }
 
-    public function add_anotacao(Request $request){
+    public function add_anotacao(Request $request)
+    {
         $id_topic = $request->get('id_topic');
         $titulo = $request->get('title');
         $anotacao = $request->get('anotacao');
