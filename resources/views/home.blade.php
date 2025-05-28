@@ -8,130 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    
-    <style>
-    .card-header {
-        position: relative;
-        padding-right: 50px;
-    }
-    
-    .dropdown-menu-toggle {
-        position: absolute;
-        top: 50%;
-        right: 15px;
-        transform: translateY(-50%);
-        background: transparent;
-        border: none;
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 1.1rem;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-    
-    .dropdown-menu-toggle:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        color: white;
-        transform: translateY(-50%) scale(1.1);
-    }
-    
-    .dropdown-menu-toggle:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
-    }
-    
-    .card-header-content {
-        display: block;
-        font-weight: 600;
-        font-size: 1rem;
-        line-height: 1.3;
-        margin: 0;
-        padding-right: 10px;
-    }
-    
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        border-radius: 10px;
-        overflow: hidden;
-        min-width: 180px;
-        padding: 8px 0;
-    }
-    
-    .dropdown-item {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-    }
-    
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-        padding-left: 20px;
-    }
-    
-    .dropdown-item i {
-        width: 18px;
-        text-align: center;
-        margin-right: 8px;
-    }
-    
-    .dropdown-divider {
-        margin: 8px 0;
-        border-color: #e9ecef;
-    }
-    
-    .text-danger:hover {
-        background-color: #fff5f5;
-        color: #dc3545;
-    }
-    
-    /* Melhorias nos cards */
-    .folder-card {
-        transition: all 0.3s ease;
-        border: none;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    }
-    
-    .folder-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    .my-topic .card-header {
-        background: linear-gradient(135deg, #0f4c81, #1a5b96);
-    }
-    
-    .partner-topic .card-header {
-        background: linear-gradient(135deg, #28a745, #20c997);
-    }
-    
-    .card-body {
-        padding: 1.5rem;
-    }
-    
-    .card-text {
-        color: #6c757d;
-        line-height: 1.6;
-        font-size: 0.95rem;
-    }
-    
-    .card-footer {
-        background-color: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-        padding: 1rem 1.5rem;
-    }
-    
-    .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        border-radius: 6px;
-        font-weight: 500;
-    }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/pdf-upload.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     @include('include.sidebar')
@@ -153,11 +31,11 @@
                 <p class="mb-0">Seu assistente de estudos personalizado. Pesquise qualquer matéria e organize seus materiais de estudo em um só lugar.</p>
             </div>
 
-            <!-- Alertas de erro -->
+
+            <!-- Alertas -->
             @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong><i class="bi bi-exclamation-triangle me-2"></i>Ops! Algo deu errado:</strong>
-                <ul class="mb-0 mt-2">
+                <ul class="mb-0">
                     @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach
@@ -166,24 +44,74 @@
             </div>
             @endif
 
+            @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
             <!-- Barra de pesquisa -->
             <div class="search-container">
                 <h4 class="mb-4"><i class="bi bi-search me-2"></i>O que você quer aprender hoje?</h4>
                 <form action="/new_topic_folder" method="POST">
                     @csrf
                     <div class="row g-3">
-                        <div class="col-md-10">
-                            <input type="text" class="form-control search-input" name="topic" 
-                                   placeholder="Digite uma matéria ou tópico (ex: Biologia, Equações de 2º grau, Literatura Brasileira...)" 
-                                   required>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control search-input" name="topic" placeholder="Digite uma matéria ou tópico (ex: Biologia, Equações de 2º grau, Literatura Brasileira...)" required>
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn search-btn w-100">
                                 <i class="bi bi-plus-circle me-1"></i>Pesquisar
                             </button>
                         </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#pdfUploadModal">
+                                <i class="bi bi-file-earmark-pdf me-1"></i>Upload PDF
+                            </button>
+                        </div>
                     </div>
                 </form>
+            </div>
+
+            <!-- Seção de PDFs Estáticos -->
+            <div class="pdf-library-section mb-5">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="pdf-library-card">
+                            <div class="library-header">
+                                <h4><i class="bi bi-collection me-2"></i>Biblioteca de PDFs</h4>
+                                <span class="badge bg-info">{{ isset($pdfs) ? count($pdfs) : 0 }} PDFs</span>
+                            </div>
+                            <div class="library-content">
+                                <div class="row g-3">
+                                    <!-- PDF Estático 1 -->
+                                    @foreach($pdfs as $pdf)   
+                                    <div class="col-md-4">
+                                        <div class="pdf-item">
+                                            <div class="pdf-icon">
+                                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                                            </div>
+                                            <div class="pdf-info">
+                                                <h6>{{$pdf->name}}</h6>
+                                                <p>{{$pdf->summary}}</p>
+                                                <small class="text-muted">Processado pela IA • {{$pdf->pages}} páginas</small>
+                                            </div>
+                                            <div class="pdf-actions">
+                                                <a href="/pdf/{{$pdf->id}}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-chat-dots"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Estatísticas -->
@@ -231,7 +159,7 @@
                     <div class="col-md-6 col-xl-4 mb-4">
                         <div class="folder-card card my-topic">
                             <div class="card-header">
-                                <span class="card-header-content">{{ $folder->name }} - {{ $folder->materia }}</span>
+                                <span class="card-header-content">{{ $folder->name }} - {{ $folder->matter }}</span>
                                 <div class="dropdown">
                                     <button class="dropdown-menu-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -241,13 +169,15 @@
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i>Editar</a></li>
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-share"></i>Compartilhar</a></li>
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>Baixar</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash"></i>Excluir</a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">{{ Str::limit($folder->resumo, 120) }}</p>
+                                <p class="card-text">{{ Str::limit($folder->summary, 120) }}</p>
                             </div>
                             <div class="card-footer d-flex justify-content-between">
                                 <a href="/topico/{{ $folder->id }}" class="btn btn-sm btn-primary">
@@ -270,14 +200,14 @@
                 <h4 class="section-title">
                     <i class="bi bi-people-fill"></i>
                     Tópicos de Parceiros
-                    <span class="badge bg-success">{{ count($relacionados) }}</span>
+                    <span class="badge bg-primary">{{ count($relacionados) }}</span>
                 </h4>
                 <div class="row g-4">
                     @foreach($relacionados as $parceiro)
                     <div class="col-md-6 col-xl-4 mb-4">
                         <div class="folder-card card partner-topic">
                             <div class="card-header">
-                                <span class="card-header-content">{{ $parceiro->name }} - {{ $parceiro->materia }}</span>
+                                <span class="card-header-content">{{ $parceiro->name }} - {{ $parceiro->matter }}</span>
                                 <div class="dropdown">
                                     <button class="dropdown-menu-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -287,16 +217,18 @@
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark"></i>Salvar nos Favoritos</a></li>
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>Baixar</a></li>
                                         <li><a class="dropdown-item" href="#"><i class="bi bi-share"></i>Compartilhar</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item text-warning" href="#"><i class="bi bi-flag"></i>Reportar</a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">{{ Str::limit($parceiro->resumo, 120) }}</p>
+                                <p class="card-text">{{ Str::limit($parceiro->summary, 120) }}</p>
                             </div>
                             <div class="card-footer d-flex justify-content-between">
-                                <a href="/topico/{{ $parceiro->id }}" class="btn btn-sm btn-success">
+                                <a href="/topico/{{ $parceiro->id }}" class="btn btn-sm btn-primary">
                                     <i class="bi bi-folder-symlink me-1"></i>Visualizar
                                 </a>
                                 <button class="btn btn-sm btn-outline-primary">
@@ -321,9 +253,55 @@
         </div>
     </div>
 
+    <!-- Modal de Upload de PDF -->
+    <div class="modal fade" id="pdfUploadModal" tabindex="-1" aria-labelledby="pdfUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfUploadModalLabel">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Upload de PDFs para IA
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('pdf.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Título do PDF -->
+                        <div class="mb-4">
+                            <label for="pdfTitle" class="form-label">
+                                <i class="bi bi-tag me-1"></i>Título do PDF
+                            </label>
+                            <input type="text" class="form-control" id="pdfTitle" name="pdf_title" placeholder="Ex: Matemática Básica" required>
+                            <div class="form-text">Digite um título para identificar este PDF</div>
+                        </div>
+
+                        <!-- Upload de PDF -->
+                        <div class="mb-4">
+                            <label for="pdfFile" class="form-label">
+                                <i class="bi bi-cloud-upload me-1"></i>Selecionar PDF
+                            </label>
+                            <input type="file" class="form-control" id="pdfFile" name="pdf_file" accept=".pdf" required>
+                            <div class="form-text">Selecione um arquivo PDF (máximo 50MB)</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload me-2"></i>Enviar PDF
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/pdf-upload.js') }}"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Toggle sidebar em dispositivos móveis
@@ -364,21 +342,6 @@
 
             window.addEventListener('resize', checkWidth);
             checkWidth();
-
-            // Scroll suave para os links do índice
-            document.querySelectorAll('.table-of-contents a').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 100
-                        , behavior: 'smooth'
-                    });
-                });
-            });
         });
 
     </script>

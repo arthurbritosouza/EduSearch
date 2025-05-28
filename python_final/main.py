@@ -1,12 +1,14 @@
+import io
+import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, File, UploadFile, Form
 import time
 load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
-
+from PyPDF2 import PdfReader
 
 app = FastAPI()
 llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
@@ -315,3 +317,103 @@ pergunta: {pergunta}
     resposta = chain.invoke({'pergunta': pergunta})
     print(resposta)
     return resposta
+
+
+
+
+
+
+class pdf_content:
+    
+    def extract_text(pdf):
+        contents = pdf.read()
+        pdf_content = PdfReader(pdf)
+        text = ""
+        for page_num in range(len(pdf_content.pages)):
+            page = pdf_content.pages[page_num]
+            text += page.extract_text() 
+        return {'text': text,
+                'size':len(contents),
+                'pages':len(pdf_content.pages)
+                }
+    
+def extract_pdf_text(user_id,title):
+    storage_path = f"/var/www/html/storage/app/pdfs/{user_id}/{title}.pdf" 
+    with open(storage_path, "rb") as f:
+        pdf_items = pdf_content.extract_text(f)
+        print(pdf_items['text'])
+    
+    print(120*"-")
+    print(f"Tamanho do arquivo: {pdf_items['size']} bytes")
+    return {"size": pdf_items['size'], 
+            "words": len(pdf_items['text']),
+            "pages": pdf_items['pages'],
+            "text": pdf_items['text']
+    }
+
+
+def content_pdf(text):
+    prompt_content = PromptTemplate(
+        input_variables=["text"],
+        template='''Você é um professor experiente de mais de 15 anos em sala de aula.
+        Quero que você faça um resumo detalhado do conteúdo do PDF abaixo, usando bastante markdown para deixar o texto bonito e organizado:
+
+        {text}
+
+        **Instruções detalhadas:**
+        - **Separe o resumo por tópicos principais do PDF, usando cabeçalhos markdown (`## Título do Tópico`).**
+        - **Para cada tópico, faça um parágrafo detalhado, usando listas, destaques, negritos e itálicos.**
+        - **Use exemplos, citações ou destaques em bloco (`>`) quando relevante.**
+        - **Inclua links fictícios ou referências internas se quiser simular uma navegação.**
+        - **O texto deve ser grande, rico em detalhes e muito bem formatado, tornando a leitura agradável e visualmente interessante.**
+        - **Ao final, faça um breve resumo dos pontos mais importantes.**
+        '''
+    )
+    chain = prompt_content | llm | StrOutputParser()
+    content_response = chain.invoke({'text': text})
+    return content_response
+     
+def summary_pdf(text):
+    prompt_summary = PromptTemplate(
+        input_variables=["text"],
+        template='''faça um resumo sobre o pdf de ate 6 palavras do conteúdo abaixo:
+        {text}
+        Desejo apenas um resumo de 6 palavras do conteúdo do PDF, nada mais.
+        '''
+    )
+    chain_summary = prompt_summary | llm | StrOutputParser()
+    summary_response = chain_summary.invoke({'text': text})
+    return summary_response
+
+def language_pdf(text):
+    prompt_language = PromptTemplate(
+        input_variables=["text"],
+        template='''Analise a linguagem do texto abaixo e me informe qual é a linguagem predominante:
+        {text}
+        Desejo apenas a linguagem predominante do texto, nada mais.
+        Ex: Português, Inglês, Espanhol, etc.
+        '''
+    )
+    chain_language = prompt_language | llm | StrOutputParser()
+    language_response = chain_language.invoke({'text': text})
+    return language_response
+
+@app.get('/new_pdf_folder/{user_id}/{title}')
+async def new_pdf_folder(user_id,title):
+    data_pdf = extract_pdf_text(user_id,title)
+    content = content_pdf(data_pdf['text'])
+    summary = summary_pdf(data_pdf['text'])
+    language = language_pdf(data_pdf['text'])
+    print(120*"-")
+    print(content)
+    print(120*"-")
+    print("LINGUAGEM:",language)
+    
+    # Aqui você pode salvar ou processar o PDF
+    return {"size": data_pdf['size'], 
+            "content": content,
+            "summary": summary,
+            "words": len(data_pdf['text']),
+            "pages": data_pdf['pages'],
+            "language": language
+        }

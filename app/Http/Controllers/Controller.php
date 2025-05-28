@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\Topic_folder;
 use App\Models\Material;
-use App\Models\Exercises;
-use App\Models\Relacione;
-use App\Models\Anotacao;
-use App\Models\Users;
+use App\Models\Note;
+use App\Models\Exercise;
+use App\Models\Relation;
+use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +26,7 @@ class Controller extends BaseController
         $this->apiEndpoint = env('API_ENDPOINT'); 
     }
 
-    private function createMaterial($id_topic,$content,$level,$topico): Material
+    private function createMaterial($topic_id,$content,$level,$topico): Material
     {
         $levelMap = [
             'iniciante' => ['Introdução de ', 1],
@@ -36,22 +36,22 @@ class Controller extends BaseController
 
         return Material::create([
             'user_id' => Auth::id(),
-            'id_topic' => $id_topic,
+            'topic_id' => $topic_id,
             'content_topic' => $content,
             'name_material' => $levelMap[$level][0] . $topico . ($level === 'avancado' ? ' Avançado' : ''),
             'level' => $levelMap[$level][1]
         ]);
     }
 
-    private function createTopic($request_api,$topic): Topic_folder
+    private function createTopic($topic,$matter,$summary,$about,$topics): Topic_folder
     {
         return Topic_folder::create([
             'user_id' => Auth::id(),
             'name' => $topic,
-            'materia' => $request_api[0],
-            'resumo' => $request_api[1],
-            'sobre' => $request_api[2],
-            'topics' => $request_api[3]
+            'matter' => $matter,
+            'summary' => $summary,
+            'about' => $about,
+            'topics' => $topics
         ]);
     }
 
@@ -64,27 +64,27 @@ class Controller extends BaseController
             return redirect()->back()->withErrors('Falha ao obter dados da API.');
         }
 
-        $topicFolder = $this->createTopic($request_api, $topic);
-        $id_topic = $topicFolder->id;  
+        $topicFolder = $this->createTopic($topic,$request_api[0],$request_api[1],$request_api[2],$request_api[3]);
+        $topic_id = $topicFolder->id;  
 
         foreach ($request_api[4] as $material) {
             foreach ($material as $level => $content) {
-                $this->createMaterial($id_topic, $content, $level, $topic);
+                $this->createMaterial($topic_id, $content, $level, $topic);
             }
         }
         return redirect()->route('home');
 
     }
 
-    private function createExercise($id_topic, $item,$level): Exercises
+    private function createExercise($topic_id, $item,$level): Exercise
     {
-        return Exercises::create([
+        return Exercise::create([
             'user_id' => Auth::id(),
-            'id_topic' => $id_topic,
-            'titulo' => $item['titulo'],
-            'alternativas' => json_encode($item['alternativas']),
-            'resolucao' => $item['resolucao'],
-            'correta' => $item['correta'],
+            'topic_id' => $topic_id,
+            'title' => $item['titulo'],
+            'alternatives' => json_encode($item['alternativas']),
+            'resolution' => $item['resolucao'],
+            'correct' => $item['correta'],
             'level' => $level
         ]);
     }
@@ -103,7 +103,7 @@ class Controller extends BaseController
         return redirect()->back()->withSuccess('Exercícios gerados com sucesso.');
     }
     
-    private function addMaterial($id_topic, $content, $level, $topic): Material
+    private function addMaterial($topic_id, $content, $level, $name): Material
     {
         $levelMap = [
             'iniciante' => 1,
@@ -113,9 +113,9 @@ class Controller extends BaseController
 
         return Material::create([
             'user_id' => Auth::id(),
-            'id_topic' => $id_topic,
+            'topic_id' => $topic_id,
             'content_topic' => $content,
-            'name_material' => $topic,
+            'name_material' => $name,
             'level' => $levelMap[$level]
         ]);
     }
@@ -145,8 +145,8 @@ class Controller extends BaseController
             // Inicia uma transação
             \DB::beginTransaction();
     
-            Material::where('id_topic', $id)->delete();
-            Exercises::where('id_topic', $id)->delete();
+            Material::where('topic_id', $id)->delete();
+            Exercise::where('topic_id', $id)->delete();
     
             // Exclui o tópico
             $topic->delete();
@@ -164,24 +164,24 @@ class Controller extends BaseController
         }
     }
 
-    private function createRelacione($id_topic, $id_dono, $id_parceiro): Relacione
+    private function createRelacione($topic_id, $owner_id, $partner_id): Relation
     {
-        return Relacione::create([
+        return Relation::create([
             'user_id' => Auth::id(),
-            'id_topic' => $id_topic,
-            'id_dono' => $id_dono,
-            'id_parceiro' => $id_parceiro
+            'topic_id' => $topic_id,
+            'owner_id' => $owner_id,
+            'partner_id' => $partner_id
         ]);
     }
 
-    public function relacione(Request $request)
+    public function relations(Request $request)
     {    
         $data = $request->all();
         if(empty($data['email'])){
             return redirect()->back()->withErrors('Email do parceiro não pode ser vazio.');
         }
         
-        $parceiro = Users::where('email', $data['email'])->first();
+        $parceiro = User::where('email', $data['email'])->first();
         if($parceiro == null){
             return redirect()->back()->withErrors('Email do parceiro não encontrado.');
         }
@@ -194,17 +194,12 @@ class Controller extends BaseController
 
     public function add_anotacao(Request $request)
     {
-        $id_topic = $request->get('id_topic');
-        $titulo = $request->get('title');
-        $anotacao = $request->get('anotacao');
-
-        $a = new Anotacao();
-        $a->user_id = Auth::user()->id;
-        $a->id_topic = $id_topic;
-        $a->titulo = $titulo;
-        $a->anotacao = $anotacao;
-        $a->save();
-
+        Note::create([
+            'user_id' => Auth::id(),
+            'topic_id' => $request->topic_id,
+            'title' => $request->title,
+            'annotation' => $request->annotation,
+        ]);
         return redirect()->back()->withSuccess('Anotação criada com sucesso.');
     }
 
