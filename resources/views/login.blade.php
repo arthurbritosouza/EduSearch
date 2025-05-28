@@ -468,7 +468,7 @@
                 </div>
                 <div class="form-inner">
                     <!-- Formulário de Login -->
-                    <form action="login_form" method="POST" id="login-form" class="login-form active">
+                    <form action="/login_form" method="POST" id="login-form" class="login-form active">
                         @csrf
                         <div class="logo">
                             <i class="bx bx-book-reader"></i>

@@ -353,14 +353,6 @@
                             <div class="progress-bar" id="readingProgressBar"></div>
                         </div>
 
-                        <div class="reader-container">
-                            <!-- Índice Lateral -->
-                            <div class="table-of-contents" id="tocSidebar">
-                                <h4>Índice</h4>
-                                <div class="toc-content" id="tocContent">
-                                    <!-- Será preenchido dinamicamente -->
-                                </div>
-                            </div>
 
                             <!-- Conteúdo Principal -->
                             <div class="article-content" id="articleContent">
@@ -402,7 +394,7 @@
                                     </footer>
                                 </article>
                             </div>
-                        </div>
+
                     </div>
                 </div>
 
@@ -530,7 +522,7 @@
                                     </div>
                                 </div>
                                 <div class="exercise-body">
-                                    <h5>{{ $exercise['titulo'] }}</h5>
+                                    <h5>{{ $exercise['title'] }}</h5>
                                     <p class="exercise-preview">Clique para resolver este exercício...</p>
                                 </div>
                                 <div class="exercise-footer">
@@ -550,13 +542,13 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="exercise-question">
-                                                <h6>{{ $exercise['titulo'] }}</h6>
+                                                <h6>{{ $exercise['title'] }}</h6>
                                             </div>
                                             <form id="answerForm-{{ $exercise['id'] }}">
                                                 @csrf
                                                 <input type="hidden" name="id_exercise" value="{{ $exercise['id'] }}">
                                                 <div class="answer-options">
-                                                    @foreach ($exercise['alternativas'] as $index => $alternativa)
+                                                    @foreach ($exercise['alternatives'] as $index => $alternativa)
                                                     <div class="form-check answer-option">
                                                         <input class="form-check-input" type="radio" name="resposta" id="option-{{ $exercise['id'] }}-{{ $index }}" value="{{ $alternativa }}" required>
                                                         <label class="form-check-label" for="option-{{ $exercise['id'] }}-{{ $index }}">
@@ -625,7 +617,7 @@
                                     </div>
                                     <form action="/add_anotacao" method="POST">
                                         @csrf
-                                        <input type="hidden" name="id_topic" value="{{ $data_topic->id }}">
+                                        <input type="hidden" name="topic_id" value="{{ $data_topic->id }}">
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label for="noteTitle" class="form-label">Título</label>
@@ -633,7 +625,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="noteContent" class="form-label">Conteúdo</label>
-                                                <textarea class="form-control" id="noteContent" rows="5" style="height: 200px;" name="anotacao" required></textarea>
+                                                <textarea class="form-control" id="noteContent" rows="5" style="height: 200px;" name="annotation" required></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -727,7 +719,7 @@
                     <h5 class="modal-title" id="addParceiroModallLabel">Adicionar Parceiro de Estudo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="/relacione" method="post">
+                <form action="/relations" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
