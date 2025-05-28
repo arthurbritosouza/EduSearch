@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Relacione extends Model
+class Relation extends Model
 {
     //
-    protected $table = 'relacione';
     protected $fillable = [
         'user_id',
-        'id_topic',
-        'id_dono',
-        'id_parceiro'
+        'topic_id',
+        'owner_id',
+        'partner_id'
     ];
 }

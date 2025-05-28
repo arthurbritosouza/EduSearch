@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exercises', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incremental padrão
-
-            // Chaves estrangeiras (FKs)
+        Schema::create('relations', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('topic_id')->constrained('topic_folders')->onDelete('cascade');
-            $table->text('title');
-            $table->text('alternatives');
-            $table->text('resolution');
-            $table->text('correct');
-            $table->string('level', 100);
+            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('partner_id')->constrained('users')->onDelete('cascade');
             $table->timestamps(); 
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exercises');
+        Schema::dropIfExists('relations');
     }
 };
