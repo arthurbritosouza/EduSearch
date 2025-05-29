@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -99,31 +100,31 @@
             <div class="tabs-container">
                 <ul class="nav nav-tabs enhanced-tabs" id="pdfTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
                             <i class="bi bi-grid-3x3-gap"></i>
                             <span>Visão Geral</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
+                        <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab" aria-controls="content" aria-selected="false">
                             <i class="bi bi-file-text"></i>
                             <span>Conteúdo Extraído</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab">
+                        <button class="nav-link" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab" aria-controls="chat" aria-selected="false">
                             <i class="bi bi-chat-dots"></i>
                             <span>Chat com PDF</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="study-tab" data-bs-toggle="tab" data-bs-target="#study" type="button" role="tab">
+                        <button class="nav-link" id="study-tab" data-bs-toggle="tab" data-bs-target="#study" type="button" role="tab" aria-controls="study" aria-selected="false">
                             <i class="bi bi-book"></i>
                             <span>Ferramentas de Estudo</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes" type="button" role="tab">
+                        <button class="nav-link" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes" type="button" role="tab" aria-controls="notes" aria-selected="false">
                             <i class="bi bi-journal-text"></i>
                             <span>Anotações</span>
                         </button>
@@ -323,76 +324,152 @@
                 </div>
 
                 <!-- Aba Chat com PDF (CORRIGIDA) -->
-                <div class="tab-pane fade" id="chat" role="tabpanel">
-                    <div class="chat-container">
-                        <div class="chat-header">
-                            <div class="chat-info">
-                                <h3><i class="bi bi-chat-dots me-2"></i>Conversar com o PDF</h3>
-                                <p>Faça perguntas sobre o conteúdo do documento e obtenha respostas baseadas no texto extraído</p>
-                            </div>
-                            <div class="chat-controls">
-                                <button class="btn btn-outline-secondary btn-sm" id="clearChat">
-                                    <i class="bi bi-trash"></i> Limpar Chat
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm" id="exportChat">
-                                    <i class="bi bi-download"></i> Exportar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="chat-body">
-                            <!-- Mensagens do Chat -->
-                            <div class="chat-messages" id="chatMessages">
-                                <div class="message ai-message">
-                                    <div class="message-avatar">
-                                        <i class="bi bi-robot"></i>
-                                    </div>
-                                    <div class="message-content">
-                                        <div class="message-text">
-                                            Olá! Eu sou seu assistente de IA para este documento. Posso responder perguntas sobre o conteúdo, criar resumos, explicar conceitos e muito mais. Como posso ajudá-lo hoje?
-                                        </div>
-                                        <div class="message-time">Agora</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sugestões de Perguntas -->
-                            <div class="suggested-questions" id="suggestedQuestions">
-                                <h5>Perguntas Sugeridas:</h5>
-                                <div class="suggestions-grid">
-                                    <button class="suggestion-btn" onclick="askQuestion('Qual é o tema principal deste documento?')">
-                                        Qual é o tema principal?
-                                    </button>
-                                    <button class="suggestion-btn" onclick="askQuestion('Faça um resumo dos pontos mais importantes')">
-                                        Resumir pontos principais
-                                    </button>
-                                    <button class="suggestion-btn" onclick="askQuestion('Quais são os conceitos-chave abordados?')">
-                                        Conceitos-chave
-                                    </button>
-                                    <button class="suggestion-btn" onclick="askQuestion('Crie uma lista de tópicos para estudo')">
-                                        Lista de estudos
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Input do Chat -->
-                        <div class="chat-input">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="chatInput" placeholder="Digite sua pergunta sobre o documento..." maxlength="500">
-                                <button class="btn btn-primary" id="sendMessage" type="button">
-                                    <i class="bi bi-send"></i>
-                                </button>
-                            </div>
-                            <div class="input-info">
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Pressione Enter para enviar ou use comandos como "resumo" ou "quiz"
-                                </small>
-                            </div>
-                        </div>
+                <div class="tab-pane fade" id="chat" role="tabpanel" aria-labelledby="chat-tab">
+    <div class="chat-body">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai-message">
+                <div class="message-avatar"><i class="bi bi-robot"></i></div>
+                <div class="message-content">
+                    <div class="message-text">
+                        Olá! Eu sou seu assistente de IA para este documento. Posso responder perguntas sobre o conteúdo, criar resumos, explicar conceitos e muito mais. Como posso ajudá-lo hoje?
                     </div>
+                    <div class="message-time">Agora</div>
                 </div>
+            </div>
+        </div>
+        <div class="suggested-questions" id="suggestedQuestions">
+            <h5>Perguntas Sugeridas:</h5>
+            <div class="suggestions-grid">
+                <button class="suggestion-btn" onclick="askQuestion('Qual é o tema principal deste documento?')">
+                    Qual é o tema principal?
+                </button>
+                <button class="suggestion-btn" onclick="askQuestion('Faça um resumo dos pontos mais importantes')">
+                    Resumir pontos principais
+                </button>
+                <button class="suggestion-btn" onclick="askQuestion('Quais são os conceitos-chave abordados?')">
+                    Conceitos-chave
+                </button>
+                <button class="suggestion-btn" onclick="askQuestion('Crie uma lista de tópicos para estudo')">
+                    Lista de estudos
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="chat-input">
+        <div class="input-group">
+            <input type="hidden" id="user_id" value="{{ auth()->id() }}">
+            <input type="hidden" id="title" value="{{ $pdf->name }}">
+            <input type="text" class="form-control" id="chatInput" placeholder="Digite sua pergunta sobre o documento..." maxlength="500">
+            <button class="btn btn-primary" id="sendMessage" type="button">
+                <i class="bi bi-send"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Adicione o marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+// Configura o marked para renderizar quebras de linha simples como <br>
+marked.setOptions({
+  breaks: true
+});
+
+// Função para processar texto com escape de caracteres
+function processText(text) {
+    // Remove aspas do início e final
+    text = text.trim();
+    if ((text.startsWith('"') && text.endsWith('"')) || 
+        (text.startsWith("'") && text.endsWith("'"))) {
+        text = text.slice(1, -1);
+    }
+    
+    // Converte \n literal em quebras de linha reais
+    return text.replace(/\\n/g, '\n')
+               .replace(/\\t/g, '\t')
+               .replace(/\\r/g, '\r');
+}
+
+// Função para adicionar mensagem ao chat (com Markdown)
+function addMessage(text, isUser = false) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
+
+    const avatarIcon = isUser ? 'bi-person' : 'bi-robot';
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Processa o texto para converter escapes e depois renderiza o Markdown
+    const processedText = processText(text);
+    const htmlContent = marked.parse(processedText);
+
+    messageDiv.innerHTML = `
+        <div class="message-avatar"><i class="bi ${avatarIcon}"></i></div>
+        <div class="message-content">
+            <div class="message-text">${htmlContent}</div>
+            <div class="message-time">${timeString}</div>
+        </div>
+    `;
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Função para enviar mensagem
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, true);
+    input.value = '';
+
+    // Pega o user_id e o title dos inputs hidden
+    const user_id = document.getElementById('user_id').value;
+    const title = document.getElementById('title').value;
+
+    // Valida se os valores existem
+    if (!user_id || !title) {
+        addMessage('Erro: user_id ou title não definidos.');
+        return;
+    }
+
+    // Monta a URL da API
+    const apiUrl = `http://127.0.0.1:8001/chat_file/${encodeURIComponent(msg)}/${encodeURIComponent(user_id)}/${encodeURIComponent(title)}`;
+
+    // Envia para a API
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Erro na API');
+        const data = await response.text();
+        addMessage(data);
+    } catch (error) {
+        console.error('Erro ao enviar mensagem:', error);
+        addMessage('Desculpe, ocorreu um erro ao enviar sua mensagem.');
+    }
+}
+
+// Envia mensagem ao clicar no botão
+document.getElementById('sendMessage').addEventListener('click', sendMessage);
+
+// Envia mensagem ao pressionar Enter
+document.getElementById('chatInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+// Função para perguntas sugeridas (opcional)
+function askQuestion(question) {
+    const input = document.getElementById('chatInput');
+    input.value = question;
+    // Opcional: envia automaticamente
+    // sendMessage();
+}
+</script>
+
+
 
                 <!-- Aba Ferramentas de Estudo -->
                 <div class="tab-pane fade" id="study" role="tabpanel">

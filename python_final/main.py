@@ -1,15 +1,15 @@
-import io
-import os
+from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
+from langchain_huggingface import HuggingFaceEmbeddings
+from fastapi.middleware.cors import CORSMiddleware
 from langchain.prompts import PromptTemplate
+from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, Form
-import time
-load_dotenv()
-from fastapi.middleware.cors import CORSMiddleware
 from PyPDF2 import PdfReader
-
+load_dotenv()
+import time
 app = FastAPI()
 llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
 
@@ -337,7 +337,7 @@ class pdf_content:
                 'pages':len(pdf_content.pages)
                 }
     
-def extract_pdf_text(user_id,title):
+def extract_pdf_text(user_id,title,chat=False):
     storage_path = f"/var/www/html/storage/app/pdfs/{user_id}/{title}.pdf" 
     with open(storage_path, "rb") as f:
         pdf_items = pdf_content.extract_text(f)
@@ -417,3 +417,37 @@ async def new_pdf_folder(user_id,title):
             "pages": data_pdf['pages'],
             "language": language
         }
+
+
+@app.get('/chat_file/{msg}/{user_id}/{title}')
+async def chat_file(msg,user_id,title):
+    print(msg)
+    data_pdf = extract_pdf_text(user_id,title)
+    char_split = CharacterTextSplitter(chunk_size=2000, chunk_overlap=500, separator=" ")
+    splits = char_split.split_text(data_pdf['text'])
+    
+    embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    vectorstore = InMemoryVectorStore.from_texts(texts=splits,embedding=embedding_model)
+    retriever = vectorstore.as_retriever(search_type="mmr", k=10)
+    
+    result = retriever.invoke(msg)
+    print(result)
+    
+    prompt = PromptTemplate(
+        input_variables=["question", "context"],
+        template = """Você é um assistente de IA especializado em responder perguntas sobre documentos e conteúdos técnicos.  
+        Sua resposta deve ser clara, detalhada e visualmente organizada, usando Markdown para destacar títulos, tópicos e exemplos.
+
+        **Contexto fornecido:**  
+        {context}
+
+        **Pergunta do usuário:**  
+        {question}
+
+        **Resposta (use Markdown para deixar o texto mais bonito e fácil de ler):**  
+        """
+    )
+    chain = prompt | llm | StrOutputParser()
+    response = chain.invoke({'question': msg, 'context': result})
+    return response
+    

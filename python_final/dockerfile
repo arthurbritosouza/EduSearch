@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /var/www/html/api
 
-RUN pip install langchain langchain-google-genai langchain-core python-dotenv fastapi uvicorn python-multipart PyPDF2 watchdog
+RUN pip install langchain langchain-google-genai langchain-core python-dotenv fastapi uvicorn python-multipart PyPDF2 watchdog langchain-huggingface
 
 COPY . .
 
