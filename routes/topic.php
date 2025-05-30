@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\TopicController;
 use App\Models\Topic_folder;
 use App\Models\Material;
 use App\Models\Exercise;
@@ -12,6 +13,8 @@ use App\Models\User;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+
 
 Route::get('/topico/{id}', function ($id) {
     $user = User::find(Auth::user()->id);
@@ -81,7 +84,7 @@ Route::get('/topico/{id}', function ($id) {
     $textoFormatado = $converter->convertToHtml($data_topic->about);
     $topicFormatado = $converter->convertToHtml($data_topic->topics);
 
-    return view('topico', ['user' => $user,'texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
+    return view('topics.topico', ['user' => $user,'texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
 })->name('topico');
 
 Route::get('/conteudo/{topic_id}/{id_material}/{level}', function ($topic_id,$id_material,$level) {
