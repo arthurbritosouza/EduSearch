@@ -271,7 +271,7 @@
         </ul>
     </div>
     
-    {{-- <div class="sidebar-footer">
+    <div class="sidebar-footer">
         <div class="d-flex align-items-center justify-content-center mb-2">
             <div>
                 <small>{{ $user->name ?? 'Usuário' }}</small>
@@ -301,7 +301,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 </div>
 {{-- 
 <script>
