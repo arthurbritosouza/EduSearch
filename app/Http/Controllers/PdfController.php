@@ -12,16 +12,16 @@ use League\CommonMark\CommonMarkConverter;
 class PdfController extends Controller
 {
     private $apiEndpoint; // Variável PRIVADA da classe
-    
+
     public function __construct()
     {
         // Acesso PERMITIDO (dentro da classe)
-        $this->apiEndpoint = env('API_ENDPOINT'); 
+        $this->apiEndpoint = env('API_ENDPOINT');
     }
 
     public function index()
     {
-        $pdfs = Pdf::all();
+        $pdfs = Pdf_folder::all();
         return view('pdfs.index', compact('pdfs'));
     }
 
@@ -49,7 +49,7 @@ class PdfController extends Controller
         if ($request_api->failed()) {
             dd('Falha na requisição');
         }
-        
+
         $data_api = $request_api->json();
         Pdf_folder::create([
             'user_id' => auth()->user()->id,

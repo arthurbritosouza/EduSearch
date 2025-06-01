@@ -162,7 +162,7 @@
                             <p class="card-text">{{ Str::limit($folder->summary, 120) }}</p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a href="/topico/{{ $folder->id }}" class="btn btn-sm btn-primary">
+                            <a href="{{route('topic.show',$folder->id)}}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-folder-symlink me-1"></i>Abrir
                             </a>
                             <button class="btn btn-sm btn-outline-secondary">

@@ -13,15 +13,15 @@ use App\Models\Note;
 use App\Models\Exercise;
 use App\Models\Relation;
 use App\Models\User;
-
+use League\CommonMark\CommonMarkConverter;
 
 class TopicController extends Controller
 {
     private $apiEndpoint;
-    
+
     public function __construct()
     {
-        $this->apiEndpoint = env('API_ENDPOINT'); 
+        $this->apiEndpoint = env('API_ENDPOINT');
     }
 
     public function index()
@@ -72,7 +72,7 @@ class TopicController extends Controller
         }
 
         $topicFolder = $this->createTopic($topic,$request_api[0],$request_api[1],$request_api[2],$request_api[3]);
-        $topic_id = $topicFolder->id;  
+        $topic_id = $topicFolder->id;
 
         foreach ($request_api[4] as $material) {
             foreach ($material as $level => $content) {
@@ -83,54 +83,54 @@ class TopicController extends Controller
 
     }
 
-    public function show(Topic_folder $topic) 
+    public function show(Topic_folder $topic)
     {
         $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
-        ->where('topic_folders.id',$id)
+        ->where('topic_folders.id',$topic->id)
         ->where(function($query) {
-            $query->where('topic_folders.user_id', Auth::user()->id)
-                        ->orWhere('relations.owner_id', Auth::user()->id)
-                        ->orWhere('relations.partner_id', Auth::user()->id);
+            $query->where('topic_folders.user_id', auth()->user()->id)
+                        ->orWhere('relations.owner_id', auth()->user()->id)
+                        ->orWhere('relations.partner_id', auth()->user()->id);
         })
-        ->select('topic_folders.*') 
+        ->select('topic_folders.*')
         ->distinct()
         ->first();
-        
+
         $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
-        ->where('exercises.topic_id',$id)
+        ->where('exercises.topic_id',$topic->id)
         ->where(function($query) {
-            $query->where('exercises.user_id', Auth::user()->id)
-                        ->orWhere('relations.owner_id', Auth::user()->id)
-                        ->orWhere('relations.partner_id', Auth::user()->id);
+            $query->where('exercises.user_id', auth()->user()->id)
+                        ->orWhere('relations.owner_id', auth()->user()->id)
+                        ->orWhere('relations.partner_id', auth()->user()->id);
         })
         ->select('exercises.*')
         ->distinct()
         ->get();
 
         $materials = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
-        ->where('materials.topic_id',$id)
+        ->where('materials.topic_id',$topic->id)
         ->where(function($query) {
-            $query->where('materials.user_id', Auth::user()->id)
-                    ->orWhere('relations.owner_id', Auth::user()->id)
-                    ->orWhere('relations.partner_id', Auth::user()->id);
+            $query->where('materials.user_id', auth()->user()->id)
+                    ->orWhere('relations.owner_id', auth()->user()->id)
+                    ->orWhere('relations.partner_id', auth()->user()->id);
         })
         ->select('materials.*')
         ->distinct()
-        ->get();        
+        ->get();
 
         $anotacoes = Note::leftJoin('relations','notes.topic_id','=','relations.topic_id')
-        ->where('notes.topic_id',$id)
+        ->where('notes.topic_id',$topic->id)
         ->where(function($query) {
-            $query->where('notes.user_id', Auth::user()->id)
-                    ->orWhere('relations.owner_id', Auth::user()->id)
-                    ->orWhere('relations.partner_id', Auth::user()->id);
+            $query->where('notes.user_id', auth()->user()->id)
+                    ->orWhere('relations.owner_id', auth()->user()->id)
+                    ->orWhere('relations.partner_id', auth()->user()->id);
         })
         ->select('notes.*')
         ->distinct()
         ->get();
-        
+
         $parceiros = Relation::join('users', 'relations.partner_id', '=', 'users.id')
-        ->where('relations.topic_id', $id)
+        ->where('relations.topic_id', $topic->id)
         ->select('users.*')
         ->distinct()
         ->get();

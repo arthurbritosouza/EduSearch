@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Auth;
 class Controller extends BaseController
 {
     private $apiEndpoint; // Variável PRIVADA da classe
-    
+
     public function __construct()
     {
         // Acesso PERMITIDO (dentro da classe)
-        $this->apiEndpoint = env('API_ENDPOINT'); 
+        $this->apiEndpoint = env('API_ENDPOINT');
     }
 
     private function createMaterial($topic_id,$content,$level,$topico): Material
@@ -65,7 +65,7 @@ class Controller extends BaseController
         }
 
         $topicFolder = $this->createTopic($topic,$request_api[0],$request_api[1],$request_api[2],$request_api[3]);
-        $topic_id = $topicFolder->id;  
+        $topic_id = $topicFolder->id;
 
         foreach ($request_api[4] as $material) {
             foreach ($material as $level => $content) {
@@ -102,7 +102,7 @@ class Controller extends BaseController
 
         return redirect()->back()->withSuccess('Exercícios gerados com sucesso.');
     }
-    
+
     private function addMaterial($topic_id, $content, $level, $name): Material
     {
         $levelMap = [
@@ -132,37 +132,37 @@ class Controller extends BaseController
         } else{
             return redirect()->back()->withErrors('Erro ao cadastrar Material.');
         }
-        
+
     }
 
-    public function delete_topic($id)
-    {
-        try {
-            $topic = Topic_folder::find($id);
-            if (!$topic) {
-                return redirect()->route('home')->withErrors('Tópico não encontrado.');
-            }
-            // Inicia uma transação
-            \DB::beginTransaction();
-    
-            Material::where('topic_id', $id)->delete();
-            Exercise::where('topic_id', $id)->delete();
-    
-            // Exclui o tópico
-            $topic->delete();
-    
-            // Confirma a transação
-            \DB::commit();
-    
-            return redirect()->route('home')->with('success', 'Tópico excluído com sucesso.');
-        } catch (\Exception $e) {
-            // Reverte a transação em caso de erro
-            \DB::rollBack();
-    
-            // Retorna com uma mensagem de erro
-            return redirect()->route('home')->withErrors('Erro ao excluir o tópico: ' . $e->getMessage());
-        }
-    }
+    // public function delete_topic($id)
+    // {
+    //     try {
+    //         $topic = Topic_folder::find($id);
+    //         if (!$topic) {
+    //             return redirect()->route('home')->withErrors('Tópico não encontrado.');
+    //         }
+    //         // Inicia uma transação
+    //         \DB::beginTransaction();
+
+    //         Material::where('topic_id', $id)->delete();
+    //         Exercise::where('topic_id', $id)->delete();
+
+    //         // Exclui o tópico
+    //         $topic->delete();
+
+    //         // Confirma a transação
+    //         \DB::commit();
+
+    //         return redirect()->route('home')->with('success', 'Tópico excluído com sucesso.');
+    //     } catch (\Exception $e) {
+    //         // Reverte a transação em caso de erro
+    //         \DB::rollBack();
+
+    //         // Retorna com uma mensagem de erro
+    //         return redirect()->route('home')->withErrors('Erro ao excluir o tópico: ' . $e->getMessage());
+    //     }
+    // }
 
     private function createRelacione($topic_id, $owner_id, $partner_id): Relation
     {
@@ -175,12 +175,12 @@ class Controller extends BaseController
     }
 
     public function relations(Request $request)
-    {    
+    {
         $data = $request->all();
         if(empty($data['email'])){
             return redirect()->back()->withErrors('Email do parceiro não pode ser vazio.');
         }
-        
+
         $parceiro = User::where('email', $data['email'])->first();
         if($parceiro == null){
             return redirect()->back()->withErrors('Email do parceiro não encontrado.');
@@ -203,10 +203,10 @@ class Controller extends BaseController
         return redirect()->back()->withSuccess('Anotação criada com sucesso.');
     }
 
-    public function delete_anotacao($id){
-        Anotacao::where('id', $id)->delete();
-        return redirect()->back()->withErrors('Anotação excluída com sucesso.');
-    }
+    // public function delete_anotacao($id){
+    //     Anotacao::where('id', $id)->delete();
+    //     return redirect()->back()->withErrors('Anotação excluída com sucesso.');
+    // }
 
 
 }
