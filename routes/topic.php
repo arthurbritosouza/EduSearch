@@ -16,119 +16,119 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-Route::get('/topico/{id}', function ($id) {
-    $user = User::find(Auth::user()->id);
+//Route::get('/topico/{id}', function ($id) {
+//    $user = User::find(Auth::user()->id);
+//
+//    $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
+//    ->where('topic_folders.id',$id)
+//    ->where(function($query) {
+//        $query->where('topic_folders.user_id', Auth::user()->id)
+//                    ->orWhere('relations.owner_id', Auth::user()->id)
+//                    ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('topic_folders.*')
+//    ->distinct()
+//    ->first();
+//
+//    $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
+//    ->where('exercises.topic_id',$id)
+//    ->where(function($query) {
+//        $query->where('exercises.user_id', Auth::user()->id)
+//                    ->orWhere('relations.owner_id', Auth::user()->id)
+//                    ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('exercises.*')
+//    ->distinct()
+//    ->get();
+//
+//    $materials = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
+//    ->where('materials.topic_id',$id)
+//    ->where(function($query) {
+//        $query->where('materials.user_id', Auth::user()->id)
+//                ->orWhere('relations.owner_id', Auth::user()->id)
+//                ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('materials.*')
+//    ->distinct()
+//    ->get();
+//    // dd($materials);
+//    $anotacoes = Note::leftJoin('relations','notes.topic_id','=','relations.topic_id')
+//    ->where('notes.topic_id',$id)
+//    ->where(function($query) {
+//        $query->where('notes.user_id', Auth::user()->id)
+//                ->orWhere('relations.owner_id', Auth::user()->id)
+//                ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('notes.*')
+//    ->distinct()
+//    ->get();
+//
+//
+//    $parceiros = Relation::join('users', 'relations.partner_id', '=', 'users.id')
+//    ->where('relations.topic_id', $id)
+//    ->select('users.*')
+//    ->distinct()
+//    ->get();
+//
+//    $arrayEx = [];
+//    foreach ($exercises as $exercise) {
+//        $arrayEx[] = [
+//            'id' => $exercise->id,
+//            'title' => $exercise->title,
+//            'level' => $exercise->level,
+//            'alternatives' => array_values(array_filter(json_decode($exercise->alternatives, true))),
+//            'resolution' => $exercise->resolution,
+//        ];
+//    }
+//    $converter = new CommonMarkConverter();
+//    $textoFormatado = $converter->convertToHtml($data_topic->about);
+//    $topicFormatado = $converter->convertToHtml($data_topic->topics);
+//
+//    return view('topics.topico', ['user' => $user,'texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
+//})->name('topico');
 
-    $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
-    ->where('topic_folders.id',$id)
-    ->where(function($query) {
-        $query->where('topic_folders.user_id', Auth::user()->id)
-                    ->orWhere('relations.owner_id', Auth::user()->id)
-                    ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('topic_folders.*') 
-    ->distinct()
-    ->first();
-    
-    $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
-    ->where('exercises.topic_id',$id)
-    ->where(function($query) {
-        $query->where('exercises.user_id', Auth::user()->id)
-                    ->orWhere('relations.owner_id', Auth::user()->id)
-                    ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('exercises.*')
-    ->distinct()
-    ->get();
-
-    $materials = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
-    ->where('materials.topic_id',$id)
-    ->where(function($query) {
-        $query->where('materials.user_id', Auth::user()->id)
-                ->orWhere('relations.owner_id', Auth::user()->id)
-                ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('materials.*')
-    ->distinct()
-    ->get();        
-    // dd($materials);
-    $anotacoes = Note::leftJoin('relations','notes.topic_id','=','relations.topic_id')
-    ->where('notes.topic_id',$id)
-    ->where(function($query) {
-        $query->where('notes.user_id', Auth::user()->id)
-                ->orWhere('relations.owner_id', Auth::user()->id)
-                ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('notes.*')
-    ->distinct()
-    ->get();
-    
-
-    $parceiros = Relation::join('users', 'relations.partner_id', '=', 'users.id')
-    ->where('relations.topic_id', $id)
-    ->select('users.*')
-    ->distinct()
-    ->get();
-
-    $arrayEx = [];
-    foreach ($exercises as $exercise) {
-        $arrayEx[] = [
-            'id' => $exercise->id,
-            'title' => $exercise->title,
-            'level' => $exercise->level,
-            'alternatives' => array_values(array_filter(json_decode($exercise->alternatives, true))),
-            'resolution' => $exercise->resolution,
-        ];
-    }
-    $converter = new CommonMarkConverter();
-    $textoFormatado = $converter->convertToHtml($data_topic->about);
-    $topicFormatado = $converter->convertToHtml($data_topic->topics);
-
-    return view('topics.topico', ['user' => $user,'texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
-})->name('topico');
-
-Route::get('/conteudo/{topic_id}/{id_material}/{level}', function ($topic_id,$id_material,$level) {
-    $user = User::find(Auth::user()->id);
-
-    $data_material = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
-    ->where('materials.topic_id', $topic_id)
-    ->where('materials.id',$id_material)
-    ->where('materials.level',$level)
-    ->where(function($query) {
-        $query->where('materials.user_id', Auth::user()->id)
-                ->orWhere('relations.owner_id', Auth::user()->id)
-                ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('materials.*')
-    ->distinct()
-    ->first();
-
-    $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
-    ->where('topic_folders.id',$topic_id)
-    ->where(function($query) {
-        $query->where('topic_folders.user_id', Auth::user()->id)
-                ->orWhere('relations.owner_id', Auth::user()->id)
-                ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('topic_folders.*') 
-    ->distinct()
-    ->first();
-
-    $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
-    ->where('exercises.topic_id',$topic_id)
-    ->where(function($query) {
-        $query->where('exercises.user_id', Auth::user()->id)
-                ->orWhere('relations.owner_id', Auth::user()->id)
-                ->orWhere('relations.partner_id', Auth::user()->id);
-    })
-    ->select('exercises.*')
-    ->get();
-    
-    $converter = new CommonMarkConverter();
-    $textoMD = $converter->convertToHtml($data_material->content_topic);
-
-    return view('conteudo',['user' => $user,'textoMD' => $textoMD,'data_topic' => $data_topic,'exercises' => $exercises,'data_material' => $data_material]);
-})->name('conteudo');
+//Route::get('/conteudo/{topic_id}/{id_material}/{level}', function ($topic_id,$id_material,$level) {
+//    $user = User::find(Auth::user()->id);
+//
+//    $data_material = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
+//    ->where('materials.topic_id', $topic_id)
+//    ->where('materials.id',$id_material)
+//    ->where('materials.level',$level)
+//    ->where(function($query) {
+//        $query->where('materials.user_id', Auth::user()->id)
+//                ->orWhere('relations.owner_id', Auth::user()->id)
+//                ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('materials.*')
+//    ->distinct()
+//    ->first();
+//
+//    $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
+//    ->where('topic_folders.id',$topic_id)
+//    ->where(function($query) {
+//        $query->where('topic_folders.user_id', Auth::user()->id)
+//                ->orWhere('relations.owner_id', Auth::user()->id)
+//                ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('topic_folders.*')
+//    ->distinct()
+//    ->first();
+//
+//    $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
+//    ->where('exercises.topic_id',$topic_id)
+//    ->where(function($query) {
+//        $query->where('exercises.user_id', Auth::user()->id)
+//                ->orWhere('relations.owner_id', Auth::user()->id)
+//                ->orWhere('relations.partner_id', Auth::user()->id);
+//    })
+//    ->select('exercises.*')
+//    ->get();
+//
+//    $converter = new CommonMarkConverter();
+//    $textoMD = $converter->convertToHtml($data_material->content_topic);
+//
+//    return view('conteudo',['user' => $user,'textoMD' => $textoMD,'data_topic' => $data_topic,'exercises' => $exercises,'data_material' => $data_material]);
+//})->name('conteudo');
 
 Route::post('/verificar-resposta', function (Request $request) {
     try {
@@ -140,11 +140,11 @@ Route::post('/verificar-resposta', function (Request $request) {
 
         // Buscar o exercício no banco de dados
         $exercise = Exercise::findOrFail($request->id_exercise);
-        
+
         // Normalizar as respostas para comparação (remover espaços extras, converter para minúsculas)
         $respostaCorreta = strtolower(trim($exercise->correta));
         $respostaUsuario = strtolower(trim($request->resposta));
-        
+
         // Verificar se a resposta está correta
         $acertou = ($respostaUsuario === $respostaCorreta);
 
@@ -167,15 +167,15 @@ Route::post('/verificar-resposta', function (Request $request) {
     }
 });
 
-Route::post('/edit_topic', function (Request $request) {
-    $topic_id = $request->input('topic_id');
-    $name_topic = $request->input('name_topic');
-    Topic_folder::where('id',$topic_id)->update(['name' => $name_topic]);
-    return redirect()->back()->withSuccess('Nome alterado com sucesso!');
-})->name('edit_topic');
+//Route::post('/edit_topic', function (Request $request) {
+//    $topic_id = $request->input('topic_id');
+//    $name_topic = $request->input('name_topic');
+//    Topic_folder::where('id',$topic_id)->update(['name' => $name_topic]);
+//    return redirect()->back()->withSuccess('Nome alterado com sucesso!');
+//})->name('edit_topic');
 
 Route::get('/excluir_parceiro/{topic_id}/{partner_id}', function ($topic_id,$partner_id) {
-    relations::where('topic_id',$topic_id)->where('partner_id',$partner_id)->delete();
+    Relation::where('topic_id',$topic_id)->where('partner_id',$partner_id)->delete();
     return redirect()->back()->withErrors('Parceiro excluído com sucesso!');
 })->name('excluir_parceiro');
 

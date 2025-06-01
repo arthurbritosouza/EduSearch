@@ -26,8 +26,8 @@ Route::get('/home', function () {
 
     $relacionados = Topic_folder::join('relations', 'topic_folders.id', '=', 'relations.topic_id')
     ->where('relations.partner_id', Auth::user()->id)
-    ->select('topic_folders.*') 
-    ->get(); 
+    ->select('topic_folders.*')
+    ->get();
 
     // dd($folders);
 
@@ -42,6 +42,6 @@ Route::group(['middleware' => ['auth']], function () {
         'material' => MaterialController::class,
         'pdf' => PdfController::class,
     ]);
-    // require base_path('routes/topic.php');
-    // require base_path('routes/pdf.php');
+     require base_path('routes/topic.php');
+     require base_path('routes/pdf.php');
 });
