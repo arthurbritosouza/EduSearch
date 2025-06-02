@@ -2,28 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use League\CommonMark\CommonMarkConverter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\Topic_folder;
 use App\Models\Material;
-use App\Models\Note;
 use App\Models\Exercise;
 use App\Models\Relation;
+use App\Models\Note;
 use App\Models\User;
-use League\CommonMark\CommonMarkConverter;
+use App\Api;
 
 class TopicController extends Controller
 {
-    private $apiEndpoint;
-
-    public function __construct()
-    {
-        $this->apiEndpoint = env('API_ENDPOINT');
-    }
-
     public function index()
     {
         //
@@ -65,7 +57,7 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $topic = $request->get('topic');
-        $request_api = Http::timeout(120)->get($this->apiEndpoint.'/new_topic_folder/'.$topic);
+        $request_api = Http::timeout(120)->get(Api::endpoint().'/new_topic_folder/'.$topic);
 
         if ($request_api->failed()) {
             return redirect()->back()->withErrors('Falha ao obter dados da API.');
@@ -79,8 +71,7 @@ class TopicController extends Controller
                 $this->createMaterial($topic_id, $content, $level, $topic);
             }
         }
-        return redirect()->route('home');
-
+        return redirect()->route('home')->withSucess('Tópico criado com sucesso!');
     }
 
     public function show(Topic_folder $topic)
@@ -128,6 +119,7 @@ class TopicController extends Controller
         ->select('notes.*')
         ->distinct()
         ->get();
+        // dD($anotacoes);
 
         $parceiros = Relation::join('users', 'relations.partner_id', '=', 'users.id')
         ->where('relations.topic_id', $topic->id)
@@ -169,7 +161,7 @@ class TopicController extends Controller
             'name' => 'required|max:20'
         ]);
         $topic->update($validate);
-        return redirect()->back()->with('success', 'Tópico atualizado com sucesso!');    }
+        return redirect()->back()->withSuccess('Tópico atualizado com sucesso!');    }
 
     /**
      * Remove the specified resource from storage.
@@ -177,6 +169,6 @@ class TopicController extends Controller
     public function destroy(Topic_folder $topic)
     {
         $topic->delete();
-        return redirect()->route('home')->with('success', 'Tópico excluído com sucesso!');
+        return redirect()->route('home')->withSuccess('Tópico excluído com sucesso!');
     }
 }

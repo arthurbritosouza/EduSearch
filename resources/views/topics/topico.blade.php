@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-EduSearch - {{$data_topic->name}}
+EduSearch - {{ $data_topic->name }}
 @endsection
 
 @section('style')
@@ -28,13 +28,14 @@ EduSearch - {{$data_topic->name}}
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/home"><i class="bi bi-house"></i> Home</a></li>
-                            <li class="breadcrumb-item"><span>{{$data_topic->materia}}</span></li>
-                            <li class="breadcrumb-item active">{{$data_topic->name}}</li>
+                            <li class="breadcrumb-item"><span>{{ $data_topic->materia }}</span></li>
+                            <li class="breadcrumb-item active">{{ $data_topic->name }}</li>
                         </ol>
                     </nav>
                 </div>
-                <h1 class="page-title">{{$data_topic->name}}</h1>
-                <p class="page-subtitle">{{$data_topic->materia}} • Criado em {{ \Carbon\Carbon::parse($data_topic->created_at)->format('d/m/Y') }}</p>
+                <h1 class="page-title">{{ $data_topic->name }}</h1>
+                <p class="page-subtitle">{{ $data_topic->materia }} • Criado em
+                    {{ \Carbon\Carbon::parse($data_topic->created_at)->format('d/m/Y') }}</p>
             </div>
             <div class="header-actions">
                 <div class="action-buttons">
@@ -52,8 +53,10 @@ EduSearch - {{$data_topic->name}}
                             <i class="bi bi-three-dots"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i>Exportar PDF</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-printer me-2"></i>Imprimir</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i>Exportar
+                                    PDF</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-printer me-2"></i>Imprimir</a>
+                            </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -175,19 +178,11 @@ EduSearch - {{$data_topic->name}}
                     <div class="col-lg-8">
                         <div class="summary-card">
                             <div class="card-header">
-                                <h3><i class="bi bi-info-circle me-2"></i>Resumo sobre {{$data_topic->name}}</h3>
+                                <h3><i class="bi bi-info-circle me-2"></i>Resumo sobre {{ $data_topic->name }}</h3>
                             </div>
                             <div class="card-body">
                                 <div class="summary-content">
                                     {!! $texto !!}
-                                </div>
-                                <div class="summary-actions">
-                                    <button class="btn btn-primary">
-                                        <i class="bi bi-play-circle me-2"></i>Começar Estudos
-                                    </button>
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="bi bi-bookmark me-2"></i>Salvar
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -237,15 +232,16 @@ EduSearch - {{$data_topic->name}}
                                     <div class="level-section">
                                         <div class="level-header" data-bs-toggle="collapse" data-bs-target="#levelBeginner">
                                             <span class="level-badge beginner">Iniciante</span>
-                                            <span class="level-count">{{ $materials->where('level', 1)->count() }} materiais</span>
+                                            <span class="level-count">{{ $materials->where('level', 1)->count() }}
+                                                materiais</span>
                                             <i class="bi bi-chevron-down"></i>
                                         </div>
-                                        <div id="levelBeginner" class="collapse show" data-bs-parent="#levelsAccordion">
+                                        <div id="levelBeginner" class="collapse" data-bs-parent="#levelsAccordion">
                                             <div class="level-content">
                                                 @foreach ($materials->where('level', 1) as $material)
-                                                <a href="{{ route('material.show', $material->id) }} class="material-link">
+                                                <a href="{{ route('material.show', $material->id) }}" class="material-link">
                                                     <i class="bi bi-file-earmark-text"></i>
-                                                    <span>{{$material->name_material}}</span>
+                                                    <span>{{ $material->name_material }}</span>
                                                 </a>
                                                 @endforeach
                                             </div>
@@ -256,15 +252,16 @@ EduSearch - {{$data_topic->name}}
                                     <div class="level-section">
                                         <div class="level-header" data-bs-toggle="collapse" data-bs-target="#levelIntermediate">
                                             <span class="level-badge intermediate">Intermediário</span>
-                                            <span class="level-count">{{ $materials->where('level', 2)->count() }} materiais</span>
+                                            <span class="level-count">{{ $materials->where('level', 2)->count() }}
+                                                materiais</span>
                                             <i class="bi bi-chevron-down"></i>
                                         </div>
                                         <div id="levelIntermediate" class="collapse" data-bs-parent="#levelsAccordion">
                                             <div class="level-content">
                                                 @foreach ($materials->where('level', 2) as $material)
-                                                <a href="/conteudo/{{$data_topic->id}}/{{$material->id}}/2" class="material-link">
+                                                <a href="/conteudo/{{ $data_topic->id }}/{{ $material->id }}/2" class="material-link">
                                                     <i class="bi bi-file-earmark-text"></i>
-                                                    <span>{{$material->name_material}}</span>
+                                                    <span>{{ $material->name_material }}</span>
                                                 </a>
                                                 @endforeach
                                             </div>
@@ -275,15 +272,16 @@ EduSearch - {{$data_topic->name}}
                                     <div class="level-section">
                                         <div class="level-header" data-bs-toggle="collapse" data-bs-target="#levelAdvanced">
                                             <span class="level-badge advanced">Avançado</span>
-                                            <span class="level-count">{{ $materials->where('level', 3)->count() }} materiais</span>
+                                            <span class="level-count">{{ $materials->where('level', 3)->count() }}
+                                                materiais</span>
                                             <i class="bi bi-chevron-down"></i>
                                         </div>
                                         <div id="levelAdvanced" class="collapse" data-bs-parent="#levelsAccordion">
                                             <div class="level-content">
                                                 @foreach ($materials->where('level', 3) as $material)
-                                                <a href="/conteudo/{{$data_topic->id}}/{{$material->id}}/3" class="material-link">
+                                                <a href="/conteudo/{{ $data_topic->id }}/{{ $material->id }}/3" class="material-link">
                                                     <i class="bi bi-file-earmark-text"></i>
-                                                    <span>{{$material->name_material}}</span>
+                                                    <span>{{ $material->name_material }}</span>
                                                 </a>
                                                 @endforeach
                                             </div>
@@ -299,10 +297,10 @@ EduSearch - {{$data_topic->name}}
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="/add_material" method="post">
+                                            <form action="{{ route('material.store') }}" method="post">
                                                 @csrf
-                                                <input type="hidden" name="id_topic" value="{{$data_topic->id}}">
-                                                <input type="hidden" name="name_topic" value="{{$data_topic->name}}">
+                                                <input type="hidden" name="id_topic" value="{{ $data_topic->id }}">
+                                                <input type="hidden" name="name_topic" value="{{ $data_topic->name }}">
                                                 <div class="mb-3">
                                                     <label for="materialTitulo" class="form-label">Título</label>
                                                     <input type="text" class="form-control" id="materialTitulo" name="title" placeholder="Digite o título">
@@ -339,48 +337,14 @@ EduSearch - {{$data_topic->name}}
         <!-- Aba Conteúdo -->
         <div class="tab-pane fade" id="topics" role="tabpanel">
             <div class="content-reader">
-                <!-- Toolbar do Leitor -->
-                <div class="reader-toolbar">
-                    <div class="toolbar-left">
-                        <button class="btn btn-sm btn-outline-secondary" id="toggleToc">
-                            <i class="bi bi-list"></i> Índice
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" id="readingMode">
-                            <i class="bi bi-eye"></i> Modo Leitura
-                        </button>
-                    </div>
-                    <div class="toolbar-right">
-                        <div class="font-controls">
-                            <button class="btn btn-sm btn-outline-secondary" id="decreaseFont">A-</button>
-                            <button class="btn btn-sm btn-outline-secondary" id="increaseFont">A+</button>
-                        </div>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                <i class="bi bi-gear"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-printer me-2"></i>Imprimir</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-download me-2"></i>Baixar PDF</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-share me-2"></i>Compartilhar</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Progresso de Leitura -->
-                <div class="reading-progress">
-                    <div class="progress-bar" id="readingProgressBar"></div>
-                </div>
-
-
                 <!-- Conteúdo Principal -->
                 <div class="article-content" id="articleContent">
                     <article class="content-article">
                         <header class="article-header">
-                            <h1>{{$data_topic->name}}</h1>
+                            <h1>{{ $data_topic->name }}</h1>
                             <div class="article-meta">
                                 <span class="meta-item">
-                                    <i class="bi bi-book me-1"></i>{{$data_topic->materia}}
+                                    <i class="bi bi-book me-1"></i>{{ $data_topic->materia }}
                                 </span>
                                 <span class="meta-item">
                                     <i class="bi bi-clock me-1"></i><span id="readingTime">5 min</span> de leitura
@@ -394,23 +358,6 @@ EduSearch - {{$data_topic->name}}
                         <div class="article-body">
                             {!! $topicFormatado !!}
                         </div>
-
-                        <footer class="article-footer">
-                            <div class="article-actions">
-                                <button class="btn btn-primary">
-                                    <i class="bi bi-bookmark-plus me-2"></i>Salvar
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="bi bi-printer me-2"></i>Imprimir
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="bi bi-download me-2"></i>PDF
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="bi bi-share me-2"></i>Compartilhar
-                                </button>
-                            </div>
-                        </footer>
                     </article>
                 </div>
 
@@ -422,7 +369,7 @@ EduSearch - {{$data_topic->name}}
             <div class="exercises-container">
                 <div class="exercises-header">
                     <div class="header-info">
-                        <h3>Exercícios de {{$data_topic->name}}</h3>
+                        <h3>Exercícios de {{ $data_topic->name }}</h3>
                         <p>Pratique seus conhecimentos com exercícios personalizados</p>
                     </div>
                     <div class="header-controls">
@@ -449,8 +396,8 @@ EduSearch - {{$data_topic->name}}
                             </div>
                             <form action="/exercise_generator" method="POST" id="exercicioForm">
                                 @csrf
-                                <input type="hidden" name="topic" value="{{$data_topic->name}}">
-                                <input type="hidden" name="id_topic" value="{{$data_topic->id}}">
+                                <input type="hidden" name="topic" value="{{ $data_topic->name }}">
+                                <input type="hidden" name="id_topic" value="{{ $data_topic->id }}">
 
                                 <div class="modal-body">
                                     <div class="mb-3">
@@ -483,7 +430,8 @@ EduSearch - {{$data_topic->name}}
                                     <div class="alert alert-info d-flex align-items-center" role="alert">
                                         <i class="bi bi-info-circle me-2"></i>
                                         <div>
-                                            Os exercícios serão gerados automaticamente com base no conteúdo de <strong>{{$data_topic->name}}</strong>.
+                                            Os exercícios serão gerados automaticamente com base no conteúdo de
+                                            <strong>{{ $data_topic->name }}</strong>.
                                         </div>
                                     </div>
                                 </div>
@@ -660,7 +608,7 @@ EduSearch - {{$data_topic->name}}
                     @foreach ($anotacoes as $anotacao)
                     <div class="note-card" data-note-id="{{ $anotacao->id }}">
                         <div class="note-header">
-                            <h5 class="note-title">{{ $anotacao->titulo }}</h5>
+                            <h5 class="note-title">{{ $anotacao->title }}</h5>
                             <div class="note-actions">
                                 <button class="btn btn-sm btn-outline-secondary btn-view" data-bs-toggle="modal" data-bs-target="#viewNoteModal">
                                     <i class="bi bi-eye"></i>
@@ -675,7 +623,7 @@ EduSearch - {{$data_topic->name}}
                         </div>
                         <div class="note-body">
                             <div class="note-content">
-                                <p>{{ Str::limit($anotacao->anotacao, 150) }}</p>
+                                <p>{{ Str::limit($anotacao->annotation, 150) }}</p>
                             </div>
                             <div class="note-meta">
                                 <small class="text-muted">
@@ -696,7 +644,7 @@ EduSearch - {{$data_topic->name}}
                 <div class="partners-header">
                     <div class="header-info">
                         <h3>Parceiros de Estudo</h3>
-                        <p>Colabore com outros estudantes interessados em {{$data_topic->name}}</p>
+                        <p>Colabore com outros estudantes interessados em {{ $data_topic->name }}</p>
                     </div>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addParceiroModall">
                         <i class="bi bi-person-plus me-2"></i>Adicionar Parceiro
@@ -705,7 +653,7 @@ EduSearch - {{$data_topic->name}}
 
 
                 <div class="partners-grid">
-                    @foreach($parceiros as $parceiro)
+                    @foreach ($parceiros as $parceiro)
                     <div class="partner-card">
                         <div class="partner-avatar">
                             <div class="avatar-placeholder">
@@ -717,7 +665,7 @@ EduSearch - {{$data_topic->name}}
                             <p class="partner-email">{{ $parceiro->email }}</p>
                         </div>
                         <div class="partner-actions">
-                            <a href="/excluir_parceiro/{{$data_topic->id}}/{{$parceiro->id}}" class="btn btn-sm btn-outline-danger">
+                            <a href="/excluir_parceiro/{{ $data_topic->id }}/{{ $parceiro->id }}" class="btn btn-sm btn-outline-danger">
                                 <i class="bi bi-person-x"></i> Remover
                             </a>
                         </div>
