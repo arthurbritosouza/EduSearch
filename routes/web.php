@@ -43,5 +43,4 @@ Route::group(['middleware' => ['auth']], function () {
         'pdf' => PdfController::class,
     ]);
      require base_path('routes/topic.php');
-     require base_path('routes/pdf.php');
 });

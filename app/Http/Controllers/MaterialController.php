@@ -13,6 +13,7 @@ use App\Models\Note;
 use App\Models\Exercise;
 use App\Models\Relation;
 use App\Models\User;
+use App\Api;
 
 class MaterialController extends Controller
 {
@@ -32,12 +33,38 @@ class MaterialController extends Controller
         //
     }
 
+    private function addMaterial($topic_id, $content, $level, $name): Material
+    {
+        $levelMap = [
+            'iniciante' => 1,
+            'intermediario' => 2,
+            'avancado' => 3
+        ];
+
+        return Material::create([
+            'user_id' => auth()->user()->id,
+            'topic_id' => $topic_id,
+            'content_topic' => $content,
+            'name_material' => $name,
+            'level' => $levelMap[$level]
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        // dd('caiu');
+        $data = $request->all();
+        $content = Http::timeout(120)->get(Api::endpoint().'/add_material/'.$data['name_topic'].'/'.$data['descricao'].'/'.$data['level']);
+
+        if ($content->successful()){
+            $this->addMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
+            return redirect()->back()->withSuccess('Material adicionado com sucesso.');
+        } else{
+            return redirect()->back()->withErrors('Erro ao cadastrar Material.');
+        }
     }
 
     /**
@@ -45,7 +72,6 @@ class MaterialController extends Controller
      */
     public function show(Material $material)
     {
-
         $data_material = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
             ->where('materials.id', $material->id)
             ->where(function($query) {
@@ -56,7 +82,6 @@ class MaterialController extends Controller
             ->select('materials.*')
             ->distinct()
             ->first();
-        // dd($data_material);
 
         $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
             ->where('topic_folders.id', $material->topic_id)
@@ -68,7 +93,6 @@ class MaterialController extends Controller
             ->select('topic_folders.*')
             ->distinct()
             ->first();
-        // dd($data_topic);
 
         $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
             ->where('exercises.topic_id', $material->topic_id)
@@ -79,7 +103,6 @@ class MaterialController extends Controller
             })
             ->select('exercises.*')
             ->get();
-        // dd($exercises);
 
         $converter = new \League\CommonMark\CommonMarkConverter();
         $textoMD = $converter->convertToHtml($data_material->content_topic);
@@ -111,8 +134,9 @@ class MaterialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Material $material)
     {
-        //
+        $material->delete();
+        return redirect()->route('topic.show', $material->topic_id)->with('success', 'Material eliminado correctamente');
     }
 }

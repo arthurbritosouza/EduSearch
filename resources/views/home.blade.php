@@ -210,7 +210,7 @@
                             <p class="card-text">{{ Str::limit($parceiro->summary, 120) }}</p>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a href="/topico/{{ $parceiro->id }}" class="btn btn-sm btn-primary">
+                            <a href="{{route('topic.show', $parceiro->id)}}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-folder-symlink me-1"></i>Visualizar
                             </a>
                             <button class="btn btn-sm btn-outline-primary">
@@ -282,7 +282,7 @@
 @endsection
 
 
-@section('scripts') 
+@section('scripts')
 
     <script src="{{ asset('js/pdf-upload.js') }}"></script>
     <script src="{{ asset('js/sidebar-mobile.js') }}"></script>
