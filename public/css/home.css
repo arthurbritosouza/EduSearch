@@ -1,0 +1,350 @@
+/* Dashboard Styles */
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.user-welcome {
+    text-align: right;
+}
+
+.welcome-text {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.current-time {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Stats Cards Large */
+.stats-card-large {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stats-card-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card-large.primary {
+    border-left-color: #007bff;
+}
+
+.stats-card-large.success {
+    border-left-color: #28a745;
+}
+
+.stats-card-large.warning {
+    border-left-color: #ffc107;
+}
+
+.stats-card-large.info {
+    border-left-color: #17a2b8;
+}
+
+.stats-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stats-card-large.primary .stats-icon {
+    color: #007bff;
+}
+
+.stats-card-large.success .stats-icon {
+    color: #28a745;
+}
+
+.stats-card-large.warning .stats-icon {
+    color: #ffc107;
+}
+
+.stats-card-large.info .stats-icon {
+    color: #17a2b8;
+}
+
+.stats-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.stats-content p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+/* Quick Actions */
+.quick-actions-section {
+    margin-bottom: 3rem;
+}
+
+.quick-action-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: #007bff;
+}
+
+.action-icon {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 1rem;
+}
+
+.quick-action-card h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.quick-action-card p {
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* Navigation Cards */
+.navigation-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.navigation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.nav-card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-card-header i {
+    font-size: 1.5rem;
+    color: #007bff;
+}
+
+.nav-card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.nav-card-body {
+    padding: 1rem;
+}
+
+.nav-link-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.nav-link-item:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    transform: translateX(5px);
+}
+
+.nav-link-item:last-child {
+    margin-bottom: 0;
+}
+
+.nav-link-item i {
+    font-size: 1.1rem;
+    width: 20px;
+}
+
+.nav-link-item .badge {
+    margin-left: auto;
+}
+
+/* Activity Cards */
+.recent-activity-card,
+.progress-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon.primary {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+
+.activity-icon.success {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.activity-icon.warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.activity-content h6 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.activity-content p {
+    margin-bottom: 0.25rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Progress Items */
+.progress-item {
+    margin-bottom: 1.5rem;
+}
+
+.progress-item:last-child {
+    margin-bottom: 0;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.progress-value {
+    color: #666;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+    }
+
+    .user-welcome {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .stats-card-large {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .quick-action-card {
+        padding: 1.5rem;
+    }
+
+    .action-icon {
+        font-size: 2.5rem;
+    }
+}

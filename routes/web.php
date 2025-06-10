@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\MaterialController;
 use App\Models\Topic_folder;
 use App\Models\Material;
@@ -41,6 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
         'topic' => TopicController::class,
         'material' => MaterialController::class,
         'pdf' => PdfController::class,
+        'room' => RoomController::class
     ]);
      require base_path('routes/topic.php');
 });
