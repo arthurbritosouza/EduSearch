@@ -1,277 +1,357 @@
-@extends('layouts.app') {{-- 1. Estende o layout pai --}}
+@extends('layouts.app')
 
 @section('title')
-    EduSearch - Sua plataforma de estudos personalizada
+    EduSearch - Dashboard Principal
 @endsection
 
 @section('style')
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pdf-upload.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endsection
 
 @section('content')
-        <!-- Mensagem de boas-vindas -->
-        <div class="welcome-message">
-            <h2><i class="bi bi-mortarboard-fill me-2"></i>Bem-vindo ao EduSearch!</h2>
-            <p class="mb-0">Seu assistente de estudos personalizado. Pesquise qualquer matéria e organize seus materiais de estudo em um só lugar.</p>
+    <!-- Header Principal -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="dashboard-title">
+                    <i class="bi bi-speedometer2 me-3"></i>Dashboard Principal
+                </h1>
+                <p class="dashboard-subtitle">Central de controle do seu ambiente de estudos</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="user-welcome">
+                    <span class="welcome-text">Bem-vindo, <strong>{{ auth()->user()->name }}</strong></span>
+                    <div class="current-time" id="currentTime"></div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Alertas -->
-        @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Cards de Estatísticas Rápidas -->
+    <div class="row mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card-large primary">
+                <div class="stats-icon">
+                    <i class="bi bi-folder2-open"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>12</h3>
+                    <p>Tópicos Criados</p>
+                    <small class="text-muted">+3 esta semana</small>
+                </div>
+            </div>
         </div>
-        @endif
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card-large success">
+                <div class="stats-icon">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>8</h3>
+                    <p>PDFs Processados</p>
+                    <small class="text-muted">156 páginas total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card-large warning">
+                <div class="stats-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>5</h3>
+                    <p>Salas Ativas</p>
+                    <small class="text-muted">23 participantes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card-large info">
+                <div class="stats-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>24h</h3>
+                    <p>Tempo de Estudo</p>
+                    <small class="text-muted">Esta semana</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        @endif
-        <!-- Barra de pesquisa -->
-        <div class="search-container">
-            <h4 class="mb-4"><i class="bi bi-search me-2"></i>O que você quer aprender hoje?</h4>
-            <form action="{{route('topic.store')}}" method="POST">
-                @csrf
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <input type="text" class="form-control search-input" name="topic" placeholder="Digite uma matéria ou tópico (ex: Biologia, Equações de 2º grau, Literatura Brasileira...)" required>
+    <!-- Ações Rápidas -->
+    <div class="quick-actions-section mb-5">
+        <h4 class="section-title mb-4">
+            <i class="bi bi-lightning-charge me-2"></i>Ações Rápidas
+        </h4>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-action-card" onclick="openCreateTopicModal()">
+                    <div class="action-icon">
+                        <i class="bi bi-plus-circle"></i>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn search-btn w-100">
-                            <i class="bi bi-plus-circle me-1"></i>Pesquisar
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#pdfUploadModal">
-                            <i class="bi bi-file-earmark-pdf me-1"></i>Upload PDF
-                        </button>
-                    </div>
+                    <h5>Criar Tópico</h5>
+                    <p>Pesquise um novo assunto para estudar</p>
                 </div>
-            </form>
-        </div>
-
-        <!-- Seção de PDFs Estáticos -->
-        <div class="pdf-library-section mb-5">
-            <div class="row">
-                <div class="col-12">
-                    <div class="pdf-library-card">
-                        <div class="library-header">
-                            <h4><i class="bi bi-collection me-2"></i>Biblioteca de PDFs</h4>
-                            <span class="badge bg-info">{{ isset($pdfs) ? count($pdfs) : 0 }} PDFs</span>
-                        </div>
-                        <div class="library-content">
-                            <div class="row g-3">
-                                @foreach($pdfs as $pdf)
-                                <div class="col-md-4">
-                                    <div class="pdf-item">
-                                        <div class="pdf-icon">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i>
-                                        </div>
-                                        <div class="pdf-info">
-                                            <h6>{{$pdf->name}}</h6>
-                                            <p>{{$pdf->summary}}</p>
-                                            <small class="text-muted">Processado pela IA • {{$pdf->pages}} páginas</small>
-                                        </div>
-                                        <div class="pdf-actions">
-                                            <a href="/pdf/{{$pdf->id}}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-success">
-                                                <i class="bi bi-chat-dots"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-action-card" onclick="openPdfUploadModal()">
+                    <div class="action-icon">
+                        <i class="bi bi-file-earmark-pdf"></i>
                     </div>
+                    <h5>Upload PDF</h5>
+                    <p>Processe um novo PDF com IA</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-action-card" onclick="window.location.href='/salas-estudo'">
+                    <div class="action-icon">
+                        <i class="bi bi-door-open"></i>
+                    </div>
+                    <h5>Entrar em Sala</h5>
+                    <p>Junte-se a uma sala de estudos</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="quick-action-card" onclick="window.location.href='/chat-ia'">
+                    <div class="action-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h5>Chat com IA</h5>
+                    <p>Tire suas dúvidas instantaneamente</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row mb-5">
-            <div class="col-md-3 mb-4">
-                <div class="stats-card">
-                    <i class="bi bi-folder"></i>
-                    <h3>{{ count($folders) }}</h3>
-                    <p>Pastas criadas</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="stats-card">
-                    <i class="bi bi-journal-text"></i>
-                    <h3>48</h3>
-                    <p>Materiais salvos</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="stats-card">
-                    <i class="bi bi-clock"></i>
-                    <h3>8h</h3>
-                    <p>Tempo de estudo</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="stats-card">
-                    <i class="bi bi-share"></i>
-                    <h3>{{ count($relacionados) }}</h3>
-                    <p>Compartilhamentos</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Meus Tópicos -->
-        @if(count($folders) > 0)
-        <section class="my-topics-section">
-            <h4 class="section-title">
-                <i class="bi bi-folder2-open"></i>
-                Meus Tópicos
-                <span class="badge bg-primary">{{ count($folders) }}</span>
-            </h4>
-            <div class="row g-4">
-                @foreach($folders as $folder)
-                <div class="col-md-6 col-xl-4 mb-4">
-                    <div class="folder-card card my-topic">
-                        <div class="card-header">
-                            <span class="card-header-content">{{ $folder->name }} - {{ $folder->matter }}</span>
-                            <div class="dropdown">
-                                <button class="dropdown-menu-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-eye"></i>Visualizar</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i>Editar</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-share"></i>Compartilhar</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>Baixar</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash"></i>Excluir</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">{{ Str::limit($folder->summary, 120) }}</p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="{{route('topic.show',$folder->id)}}" class="btn btn-sm btn-primary">
-                                <i class="bi bi-folder-symlink me-1"></i>Abrir
-                            </a>
-                            <button class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-share me-1"></i>Compartilhar
-                            </button>
-                        </div>
+    <!-- Navegação por Seções -->
+    <div class="navigation-sections mb-5">
+        <h4 class="section-title mb-4">
+            <i class="bi bi-compass me-2"></i>Explorar Sistema
+        </h4>
+        <div class="row g-4">
+            <!-- Seção Estudos -->
+            <div class="col-lg-4">
+                <div class="navigation-card estudos">
+                    <div class="nav-card-header">
+                        <i class="bi bi-mortarboard"></i>
+                        <h5>Estudos</h5>
+                    </div>
+                    <div class="nav-card-body">
+                        <a href="/topicos" class="nav-link-item">
+                            <i class="bi bi-folder2-open"></i>
+                            <span>Meus Tópicos</span>
+                            <span class="badge bg-primary">12</span>
+                        </a>
+                        <a href="/pdfs" class="nav-link-item">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            <span>Biblioteca de PDFs</span>
+                            <span class="badge bg-success">8</span>
+                        </a>
+                        <a href="/favoritos" class="nav-link-item">
+                            <i class="bi bi-bookmark-heart"></i>
+                            <span>Favoritos</span>
+                            <span class="badge bg-warning">15</span>
+                        </a>
                     </div>
                 </div>
-                @endforeach
             </div>
-        </section>
-        @endif
 
-        <!-- Tópicos de Parceiros -->
-        @if(count($relacionados) > 0)
-        <section class="partner-topics-section">
-            <h4 class="section-title">
-                <i class="bi bi-people-fill"></i>
-                Tópicos de Parceiros
-                <span class="badge bg-primary">{{ count($relacionados) }}</span>
-            </h4>
-            <div class="row g-4">
-                @foreach($relacionados as $parceiro)
-                <div class="col-md-6 col-xl-4 mb-4">
-                    <div class="folder-card card partner-topic">
-                        <div class="card-header">
-                            <span class="card-header-content">{{ $parceiro->name }} - {{ $parceiro->matter }}</span>
-                            <div class="dropdown">
-                                <button class="dropdown-menu-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-eye"></i>Visualizar</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark"></i>Salvar nos Favoritos</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-download"></i>Baixar</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="bi bi-share"></i>Compartilhar</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item text-warning" href="#"><i class="bi bi-flag"></i>Reportar</a></li>
-                                </ul>
-                            </div>
+            <!-- Seção Colaborativa -->
+            <div class="col-lg-4">
+                <div class="navigation-card colaborativo">
+                    <div class="nav-card-header">
+                        <i class="bi bi-people"></i>
+                        <h5>Colaborativo</h5>
+                    </div>
+                    <div class="nav-card-body">
+                        <a href="/salas-estudo" class="nav-link-item">
+                            <i class="bi bi-door-open"></i>
+                            <span>Salas de Estudo</span>
+                            <span class="badge bg-success">5 ativas</span>
+                        </a>
+                        <a href="/comunidade" class="nav-link-item">
+                            <i class="bi bi-share"></i>
+                            <span>Comunidade</span>
+                            <span class="badge bg-info">234 posts</span>
+                        </a>
+                        <a href="/grupos" class="nav-link-item">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Meus Grupos</span>
+                            <span class="badge bg-primary">3</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Ferramentas -->
+            <div class="col-lg-4">
+                <div class="navigation-card ferramentas">
+                    <div class="nav-card-header">
+                        <i class="bi bi-tools"></i>
+                        <h5>Ferramentas</h5>
+                    </div>
+                    <div class="nav-card-body">
+                        <a href="/chat-ia" class="nav-link-item">
+                            <i class="bi bi-robot"></i>
+                            <span>Chat com IA</span>
+                            <span class="badge bg-success">Online</span>
+                        </a>
+                        <a href="/resumos" class="nav-link-item">
+                            <i class="bi bi-journal-text"></i>
+                            <span>Gerador de Resumos</span>
+                        </a>
+                        <a href="/flashcards" class="nav-link-item">
+                            <i class="bi bi-card-text"></i>
+                            <span>Flashcards</span>
+                            <span class="badge bg-warning">12 sets</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atividades Recentes -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="recent-activity-card">
+                <div class="card-header">
+                    <h5><i class="bi bi-clock-history me-2"></i>Atividades Recentes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="activity-item">
+                        <div class="activity-icon success">
+                            <i class="bi bi-file-earmark-pdf"></i>
                         </div>
-                        <div class="card-body">
-                            <p class="card-text">{{ Str::limit($parceiro->summary, 120) }}</p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="{{route('topic.show', $parceiro->id)}}" class="btn btn-sm btn-primary">
-                                <i class="bi bi-folder-symlink me-1"></i>Visualizar
-                            </a>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-bookmark me-1"></i>Salvar
-                            </button>
-                            </div>
+                        <div class="activity-content">
+                            <h6>PDF "Matemática Básica" processado</h6>
+                            <p>45 páginas analisadas pela IA</p>
+                            <small class="text-muted">2 horas atrás</small>
                         </div>
                     </div>
-                    @endforeach
+                    <div class="activity-item">
+                        <div class="activity-icon primary">
+                            <i class="bi bi-folder-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6>Novo tópico "Física Quântica" criado</h6>
+                            <p>Conteúdo gerado automaticamente</p>
+                            <small class="text-muted">5 horas atrás</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon warning">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6>Entrou na sala "Matemática ENEM"</h6>
+                            <p>12 participantes ativos</p>
+                            <small class="text-muted">1 dia atrás</small>
+                        </div>
+                    </div>
                 </div>
-            </section>
-            @endif
-
-            <!-- Estado Vazio -->
-            @if(count($folders) === 0 && count($relacionados) === 0)
-            <div class="empty-state">
-                <i class="bi bi-folder-plus"></i>
-                <h4>Nenhum tópico ainda</h4>
-                <p>Comece pesquisando um assunto que você quer estudar!</p>
             </div>
-            @endif
         </div>
 
-    <!-- Modal Pdf -->
-    <div class="modal fade" id="pdfUploadModal" tabindex="-1" aria-labelledby="pdfUploadModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="col-lg-4">
+            <div class="progress-card">
+                <div class="card-header">
+                    <h5><i class="bi bi-graph-up me-2"></i>Progresso Semanal</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Tópicos Estudados</span>
+                            <span class="progress-value">8/10</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>PDFs Lidos</span>
+                            <span class="progress-value">5/8</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 62.5%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Tempo de Estudo</span>
+                            <span class="progress-value">24h/30h</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Criar Tópico Rápido -->
+    <div class="modal fade" id="quickTopicModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pdfUploadModalLabel">
-                        <i class="bi bi-file-earmark-pdf me-2"></i>Upload de PDFs para IA
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle me-2"></i>Criar Tópico Rápido
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('topic.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="quickTopic" class="form-label">Assunto para estudar</label>
+                            <input type="text" class="form-control" id="quickTopic" name="topic"
+                                   placeholder="Ex: Equações de 2º grau, Revolução Francesa..." required>
+                            <div class="form-text">A IA irá gerar conteúdo automaticamente</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-magic me-1"></i>Criar com IA
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Upload PDF Rápido -->
+    <div class="modal fade" id="quickPdfModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Upload PDF Rápido
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="{{ route('pdf.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-                        <!-- Título do PDF -->
-                        <div class="mb-4">
-                            <label for="pdfTitle" class="form-label">
-                                <i class="bi bi-tag me-1"></i>Título do PDF
-                            </label>
-                            <input type="text" class="form-control" id="pdfTitle" name="pdf_title" placeholder="Ex: Matemática Básica" required>
-                            <div class="form-text">Digite um título para identificar este PDF</div>
+                        <div class="mb-3">
+                            <label for="quickPdfTitle" class="form-label">Título do PDF</label>
+                            <input type="text" class="form-control" id="quickPdfTitle" name="pdf_title"
+                                   placeholder="Ex: Matemática Básica" required>
                         </div>
-
-                        <!-- Upload de PDF -->
-                        <div class="mb-4">
-                            <label for="pdfFile" class="form-label">
-                                <i class="bi bi-cloud-upload me-1"></i>Selecionar PDF
-                            </label>
-                            <input type="file" class="form-control" id="pdfFile" name="pdf_file" accept=".pdf" required>
-                            <div class="form-text">Selecione um arquivo PDF (máximo 50MB)</div>
+                        <div class="mb-3">
+                            <label for="quickPdfFile" class="form-label">Arquivo PDF</label>
+                            <input type="file" class="form-control" id="quickPdfFile" name="pdf_file"
+                                   accept=".pdf" required>
                         </div>
                     </div>
-
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="bi bi-x-circle me-2"></i>Cancelar
-                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-cloud-upload me-2"></i>Enviar PDF
+                            <i class="bi bi-cloud-upload me-1"></i>Processar
                         </button>
                     </div>
                 </form>
@@ -281,10 +361,37 @@
 
 @endsection
 
-
 @section('scripts')
+    <script>
+        // Atualizar horário em tempo real
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR');
+            const dateString = now.toLocaleDateString('pt-BR');
+            document.getElementById('currentTime').innerHTML = `${dateString} - ${timeString}`;
+        }
 
-    <script src="{{ asset('js/pdf-upload.js') }}"></script>
-    <script src="{{ asset('js/sidebar-mobile.js') }}"></script>
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Funções para abrir modais
+        function openCreateTopicModal() {
+            new bootstrap.Modal(document.getElementById('quickTopicModal')).show();
+        }
+
+        function openPdfUploadModal() {
+            new bootstrap.Modal(document.getElementById('quickPdfModal')).show();
+        }
+
+        // Animações nos cards
+        document.querySelectorAll('.quick-action-card, .navigation-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
 @endsection
-
