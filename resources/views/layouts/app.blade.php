@@ -28,23 +28,152 @@
                         <i class="bi bi-book"></i> EduSearch
                     </div>
                     <ul class="nav flex-column mt-4">
+                        <!-- Dashboard -->
                         <li class="nav-item">
                             <a class="nav-link" href="/home">
-                                <i class="bi bi-folder"></i> Minhas Pastas
+                                <i class="bi bi-house-door"></i>
+                                <span class="nav-text">Dashboard</span>
                             </a>
                         </li>
+
+                        <!-- Divisor -->
+                        <li class="nav-divider"></li>
+
+                        <!-- Gaveta de Estudos -->
+                        <li class="nav-item nav-drawer">
+                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#estudosDrawer" aria-expanded="false">
+                                <i class="bi bi-mortarboard"></i>
+                                <span class="nav-text">Estudos</span>
+                                <i class="bi bi-chevron-down drawer-arrow"></i>
+                            </a>
+                            <div class="collapse drawer-content" id="estudosDrawer">
+                                <ul class="nav flex-column drawer-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="{{route('topic.index')}}">
+                                            <i class="bi bi-folder2-open"></i>
+                                            <span class="nav-text">Meus Tópicos</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="{{route('pdf.index')}}">
+                                            <i class="bi bi-file-earmark-pdf"></i>
+                                            <span class="nav-text">Biblioteca de PDFs</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/favoritos">
+                                            <i class="bi bi-bookmark-heart"></i>
+                                            <span class="nav-text">Favoritos</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <!-- Gaveta Colaborativa -->
+                        <li class="nav-item nav-drawer">
+                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#colaborativoDrawer" aria-expanded="false">
+                                <i class="bi bi-people"></i>
+                                <span class="nav-text">Colaborativo</span>
+                                <i class="bi bi-chevron-down drawer-arrow"></i>
+                            </a>
+                            <div class="collapse drawer-content" id="colaborativoDrawer">
+                                <ul class="nav flex-column drawer-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="{{route('room.index')}}">
+                                            <i class="bi bi-door-open"></i>
+                                            <span class="nav-text">Salas de Estudo</span>
+                                            <span class="badge bg-success ms-auto">3</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/comunidade">
+                                            <i class="bi bi-share"></i>
+                                            <span class="nav-text">Comunidade</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/grupos">
+                                            <i class="bi bi-people-fill"></i>
+                                            <span class="nav-text">Meus Grupos</span>
+                                            <span class="badge bg-primary ms-auto">2</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <!-- Gaveta de Ferramentas -->
+                        <li class="nav-item nav-drawer">
+                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#ferramentasDrawer" aria-expanded="false">
+                                <i class="bi bi-tools"></i>
+                                <span class="nav-text">Ferramentas</span>
+                                <i class="bi bi-chevron-down drawer-arrow"></i>
+                            </a>
+                            <div class="collapse drawer-content" id="ferramentasDrawer">
+                                <ul class="nav flex-column drawer-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/chat-ia">
+                                            <i class="bi bi-robot"></i>
+                                            <span class="nav-text">Chat com IA</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/resumos">
+                                            <i class="bi bi-journal-text"></i>
+                                            <span class="nav-text">Gerador de Resumos</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link drawer-item" href="/flashcards">
+                                            <i class="bi bi-card-text"></i>
+                                            <span class="nav-text">Flashcards</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <!-- Divisor -->
+                        <li class="nav-divider"></li>
+
+                        <!-- Configurações -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/perfil">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="nav-text">Meu Perfil</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/configuracoes">
+                                <i class="bi bi-gear"></i>
+                                <span class="nav-text">Configurações</span>
+                            </a>
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="/logout" id="logoutButton">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="nav-text">Logout</span>
                             </a>
                         </li>
                     </ul>
                 </div>
                 @auth
                 <div class="sidebar-footer">
-                    <div class="d-flex align-items-center justify-content-center mb-2">
-                        <div>
-                            <small>{{ auth()->user()->name ?? 'Usuário' }}</small>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ auth()->user()->name ?? 'Usuário' }}</div>
+                            <div class="user-email">{{ auth()->user()->email ?? '' }}</div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-sm btn-outline-light" title="Configurações">
+                                <i class="bi bi-gear"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

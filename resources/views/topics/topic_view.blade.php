@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-EduSearch - {{ $data_topic->name }}
+EduSearch - {{ $data_topic->name}}
 @endsection
 
 @section('style')
