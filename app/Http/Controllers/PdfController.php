@@ -22,7 +22,7 @@ class PdfController extends Controller
     public function index()
     {
         $pdfs = Pdf_folder::all();
-        return view('pdfs.index', compact('pdfs'));
+        return view('pdfs.index_pdfs', compact('pdfs'));
     }
 
     public function create()

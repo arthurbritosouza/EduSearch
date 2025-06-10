@@ -18,8 +18,18 @@ class TopicController extends Controller
 {
     public function index()
     {
-        //
+        $user = User::find(auth()->user()->id);
+        $folders = Topic_folder::where('user_id', auth()->user()->id)->orderBy('id', 'desc')
+        ->get();
+
+        $relacionados = Topic_folder::join('relations', 'topic_folders.id', '=', 'relations.topic_id')
+        ->where('relations.partner_id', auth()->user()->id)
+        ->select('topic_folders.*')
+        ->get();
+
+    return view('topics.index_topics',compact('folders','user','relacionados'));
     }
+
     public function create()
     {
         //
@@ -71,7 +81,7 @@ class TopicController extends Controller
                 $this->createMaterial($topic_id, $content, $level, $topic);
             }
         }
-        return redirect()->route('home')->withSucess('Tópico criado com sucesso!');
+        return redirect()->route('topic.index')->withSucess('Tópico criado com sucesso!');
     }
 
     public function show(Topic_folder $topic)
@@ -141,7 +151,7 @@ class TopicController extends Controller
         $textoFormatado = $converter->convertToHtml($data_topic->about);
         $topicFormatado = $converter->convertToHtml($data_topic->topics);
 
-        return view('topics.topico', ['texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
+        return view('topics.topic_view', ['texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
     }
 
     /**
