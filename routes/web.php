@@ -44,5 +44,5 @@ Route::group(['middleware' => ['auth']], function () {
         'pdf' => PdfController::class,
         'room' => RoomController::class
     ]);
-     require base_path('routes/topic.php');
+    Route::post('relation_notify', [Controller::class, 'relation_notify'])->name('relation_notify');
 });
