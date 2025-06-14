@@ -180,14 +180,57 @@
                 @endauth
             </div>
             <main id="main-content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="dashboard-header">
+                    <div class="row align-items-center">
+                        @yield('header_content')
+                        <div class="col-md-4 text-end">
+                            <div class="user-welcome">
+                                <span class="welcome-text">Bem-vindo, <strong>{{auth()->user()->name}}</strong></span>
+                                <div class="current-time" id="currentTime"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <!-- Alertas -->
+                @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                @endif
+
+                @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                @endif
+
                 @yield('content')
             </main>
         </div>
     </div>
+    <script>
+        // Atualizar horário em tempo real
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR');
+            const dateString = now.toLocaleDateString('pt-BR');
+            document.getElementById('currentTime').innerHTML = `${dateString} - ${timeString}`;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/sidebar.js') }}"></script>
-    <script src="{{ asset('js/sidebar-mobile.js') }}"></script>
+    {{-- <script src="{{ asset('js/sidebar-mobile.js') }}"></script> --}}
     @yield('scripts')
 </body>
 </html>

@@ -4,14 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Relation extends Model
+class Relation_notification extends Model
 {
-    //
     protected $fillable = [
         'user_id',
-        'topic_id',
-        'room_id',
-        'owner_id',
-        'partner_id'
+        'data_id',
+        'partner_id',
+        'type'
     ];
 }
