@@ -16,25 +16,38 @@ use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
-   public function relation_notify(Request $request)
+   public function relation_notification($notify_id)
 {
-    $parter_id = User::where('email', $request->email)->value('id');
-    $owner_id = Room::where('id', $request->room_id)->value('user_id');
-    if (!$parter_id) {
-        return redirect()->back()->withError("O usuário com o email {$request->email} não foi encontrado.");
-    }
+    $data_notifcation = Relation_notification::where('id', $notify_id)->first();
+    $owner_id = Room::where('id', $data_notifcation->data_id)->value('user_id');
 
-    $relacione = Relation_notification::create([
-        'user_id' => auth()->user()->id,
-        'data_id' => $request->room_id,
-        'partner_id' => $parter_id,
-        'type' => 2
+    // dd($data_notifcation,$owner_id);
+    // dd($notify_id,$data_notifcation,$owner_id);
+    Relation::create([
+        'user_id' => $data_notifcation->user_id,
+        'room_id' => $data_notifcation->data_id,
+        'partner_id' => $data_notifcation->partner_id,
+        'owner_id' => $owner_id,
     ]);
 
+    Relation_notification::where('id', $notify_id)->delete();
 
+    return redirect()->route('room.index', $notify_id)->withSuccess("Soliciataçõ de amizade aceita com sucesso.");
 
-    return redirect()->route('room.show', $request->room_id)->withSuccess("Soliciataçõ de amizade enviadas com sucesso.");
+}
 
+public function create_notification(Request $request){
+    $parter_id = User::where('email',$request->email)->value('id');
+    if(!$parter_id){
+        return redirect()->back()->withError('Usuário não encontrado.');
+    }
+    Relation_notification::create([
+        'user_id' => Auth::user()->id,
+        'partner_id' => $parter_id,
+        'data_id' => $request->room_id,
+        'type' => 2
+    ]);
+    return redirect()->back()->withSuccess('Solicitação enviada com sucesso.');
 }
 }
 

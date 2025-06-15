@@ -19,30 +19,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Pdf_folder;
 
 
-Route::get('/home', function () {
-    $user = User::find(Auth::user()->id);
-    $folders = Topic_folder::where('user_id', Auth::user()->id)->orderBy('id', 'desc')
-    ->get();
-    $pdfs = Pdf_folder::where('user_id', Auth::user()->id)->get();
-
-    $relacionados = Topic_folder::join('relations', 'topic_folders.id', '=', 'relations.topic_id')
-    ->where('relations.partner_id', Auth::user()->id)
-    ->select('topic_folders.*')
-    ->get();
-
-    // dd($folders);
-
-    return view('home',compact('folders','relacionados','user','pdfs'));
-})->name('home');
 
 require base_path('routes/login.php');
+require base_path('routes/base.php');
 
-Route::group(['middleware' => ['auth']], function () {
     Route::resources([
         'topic' => TopicController::class,
         'material' => MaterialController::class,
         'pdf' => PdfController::class,
         'room' => RoomController::class
     ]);
-    Route::post('relation_notify', [Controller::class, 'relation_notify'])->name('relation_notify');
-});
+

@@ -146,6 +146,16 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link d-flex justify-content-between align-items-center" href="{{route('notifications')}}">
+                                <div>
+                                    <i class="bi bi-bell"></i>
+                                    <span class="nav-text">Notificações</span>
+                                </div>
+                                <span class="badge bg-danger rounded-pill">3</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" href="/configuracoes">
                                 <i class="bi bi-gear"></i>
                                 <span class="nav-text">Configurações</span>
@@ -191,7 +201,7 @@
                         </div>
                     </div>
                 </div>
-                    <!-- Alertas -->
+                <!-- Alertas -->
                 @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">

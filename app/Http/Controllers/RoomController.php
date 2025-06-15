@@ -15,9 +15,20 @@ class RoomController extends Controller
      */
     public function index()
     {
-        return view('room.index_room');
-    }
+        $rooms = Room::join('relations', 'rooms.id', '=', 'relations.room_id')
+        ->where(function ($query) {
+            $query->where('relations.partner_id', auth()->user()->id)
+                  ->orWhere('rooms.user_id', auth()->user()->id);
+        })
+        ->select('rooms.*')
+        ->orderBy('rooms.id', 'desc')
+        ->distinct()
+        ->get();
+        // dd(auth()->user()->id,$rooms);
 
+        return view('room.index_room', compact('rooms'));
+    }
+// NÃO TA EXEBINDO O A SALA ONDE O PARCEIRO ACEITOU O RELACIONAMENTO
     /**
      * Show the form for creating a new resource.
      */
