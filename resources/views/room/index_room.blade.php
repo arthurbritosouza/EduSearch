@@ -61,7 +61,6 @@ EduSearch - Salas de Estudo
             <div class="modal-body">
                 <form action="{{ route('room.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                     <div class="mb-3">
                         <label class="form-label">Nome da Sala</label>
                         <input type="text" class="form-control" name="name" placeholder="Ex: Biologia Vestibular" required>

@@ -7,18 +7,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Pdf_folder;
 use League\CommonMark\CommonMarkConverter;
+use App\Api;
 
 
 class PdfController extends Controller
 {
-    private $apiEndpoint; // Variável PRIVADA da classe
-
-    public function __construct()
-    {
-        // Acesso PERMITIDO (dentro da classe)
-        $this->apiEndpoint = env('API_ENDPOINT');
-    }
-
     public function index()
     {
         $pdfs = Pdf_folder::all();
@@ -45,7 +38,7 @@ class PdfController extends Controller
             dd('Falha ao salvar o arquivo');
         }
         $user_id = auth()->user()->id;
-        $request_api = Http::timeout(120)->get($this->apiEndpoint.'/new_pdf_folder/'.$user_id.'/'.$request->pdf_title);
+        $request_api = Http::timeout(120)->get(Api::endpoint().'/new_pdf_folder/'.$user_id.'/'.$request->pdf_title);
         if ($request_api->failed()) {
             dd('Falha na requisição');
         }

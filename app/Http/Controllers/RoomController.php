@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Pdf_folder;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\Relation;
+use App\Models\Topic_folder;
+use App\Models\Relation_room;
+use App\Models\Room_content;
 use App\Models\User;
+use App\Http\Controllers\TopicController;
+
 
 class RoomController extends Controller
 {
@@ -15,9 +20,10 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::join('relations', 'rooms.id', '=', 'relations.room_id')
+        // dd("caiu", auth()->user()->id);
+        $rooms = Room::join('relation_rooms', 'rooms.id', '=', 'relation_rooms.room_id')
         ->where(function ($query) {
-            $query->where('relations.partner_id', auth()->user()->id)
+            $query->where('relation_rooms.partner_id', auth()->user()->id)
                   ->orWhere('rooms.user_id', auth()->user()->id);
         })
         ->select('rooms.*')
@@ -28,7 +34,7 @@ class RoomController extends Controller
 
         return view('room.index_room', compact('rooms'));
     }
-// NÃO TA EXEBINDO O A SALA ONDE O PARCEIRO ACEITOU O RELACIONAMENTO
+
     /**
      * Show the form for creating a new resource.
      */
@@ -42,22 +48,22 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required',
-            'name' => 'required',
-            'description' => 'required',
-            'password' => 'required',
-        ]);
-
         $password = bcrypt($request->password);
 
         Room::create([
-            'user_id' => $request->user_id,
+            'user_id' => auth()->user()->id,
             'name' => $request->name,
             'description' => $request->description,
             'password' => $password,
         ]);
 
+        Relation_room::create([
+            'user_id' => auth()->user()->id,
+            'room_id' => Room::latest()->first()->id,
+            'owner_id' => auth()->user()->id,
+            'partner_id' => auth()->user()->id,
+            'role' => 1
+        ]);
         return redirect()->route('room.index');
     }
 
@@ -66,7 +72,29 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        return view('room.room', compact('room'));
+        $participants = Relation_room::join('users', 'relation_rooms.partner_id', '=', 'users.id')
+            ->where('relation_rooms.room_id', $room->id)
+            ->select('relation_rooms.*','users.*')
+            ->get();
+
+        $topics = Topic_folder::where('user_id', auth()->user()->id)->get();
+        $pdfs = Pdf_folder::where('user_id', auth()->user()->id)->get();
+
+        $related_topics = Room_content::join('topic_folders', 'room_contents.content_id', '=', 'topic_folders.id')
+            ->join('users', 'topic_folders.user_id', '=', 'users.id')
+            ->where('room_contents.room_id', $room->id)
+            ->where('room_contents.content_type', 1)
+            ->select('topic_folders.*','users.name as user_name')
+            ->get();
+
+        $related_pdfs = Room_content::join('pdf_folders', 'room_contents.content_id', '=', 'pdf_folders.id')
+            ->join('users', 'pdf_folders.user_id', '=', 'users.id')
+            ->where('room_contents.room_id', $room->id)
+            ->where('room_contents.content_type', 2)
+            ->select('pdf_folders.*','users.name as user_name')
+            ->get();
+
+        return view('room.room_view', compact('room','participants','topics','pdfs','related_topics','related_pdfs'));
     }
 
     /**
@@ -80,9 +108,15 @@ class RoomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Room $room)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required'
+        ]);
+
+        $room->update($request->all());
+        return redirect()->route('room.show',$room->id)->with('success', 'Sala atualizado com sucesso!');
     }
 
     /**
@@ -110,6 +144,69 @@ class RoomController extends Controller
         ]);
 
         return redirect()->route('room.index')->withSuccess("Você foi adicionado à sala {$request->room_id} com sucesso.");
+    }
 
+    public function createTopicRoom(Request $request)
+    {
+        app(TopicController::class)->store($request);
+        $topic_id = Topic_folder::latest('id')->first()->id;
+
+        Room_content::create([
+            'user_id' => auth()->user()->id,
+            'room_id' => $request->room_id,
+            'content_id' => $topic_id,
+            'content_type' => 1
+        ]);
+
+        return redirect()->route('room.show', ['room' => $request->room_id])->withSuccess('Tópico criado com sucesso.');
+    }
+
+    public function addTopic($room_id,$topic_id)
+    {
+        if (Topic_folder::where('id', $topic_id)->doesntExist()) {
+            return redirect()->back()->withError('Tópico não encontrado.');
+        }
+
+        if(Topic_folder::where('id', $topic_id)->where('user_id', auth()->user()->id)->exists()){
+            Room_content::create([
+                'user_id' => auth()->user()->id,
+                'room_id' => $room_id,
+                'content_id' => $topic_id,
+                'content_type' => 1
+            ]);
+            return redirect()->route('room.show', ['room' => $room_id])->withSuccess('Tópico adicionado à sala com sucesso.');
+        }
+    }
+
+    public function createPdfRoom(Request $request)
+    {
+        app(PdfController::class)->store($request);
+        $pdf_id = Pdf_folder::latest('id')->first()->id;
+
+        Room_content::create([
+            'user_id' => auth()->user()->id,
+            'room_id' => $request->room_id,
+            'content_id' => $pdf_id,
+            'content_type' => 2
+        ]);
+        return redirect()->route('room.show', ['room' => $request->room_id])->withSuccess('Pdf criado com sucesso.');
+
+    }
+
+    public function addPdf($room_id,$pdf_id)
+    {
+        if (Pdf_folder::where('id', $pdf_id)->doesntExist()) {
+            return redirect()->back()->withError('Tópico não encontrado.');
+        }
+
+        if(Pdf_folder::where('id', $pdf_id)->where('user_id', auth()->user()->id)->exists()){
+            Room_content::create([
+                'user_id' => auth()->user()->id,
+                'room_id' => $room_id,
+                'content_id' => $pdf_id,
+                'content_type' => 2
+            ]);
+            return redirect()->route('room.show', ['room' => $room_id])->withSuccess('Tópico adicionado à sala com sucesso.');
+        }
     }
 }
