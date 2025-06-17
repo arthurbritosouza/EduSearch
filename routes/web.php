@@ -19,14 +19,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Pdf_folder;
 
 
-
 require base_path('routes/login.php');
+
 require base_path('routes/base.php');
+require base_path('routes/room.php');
 
     Route::resources([
         'topic' => TopicController::class,
         'material' => MaterialController::class,
-        'pdf' => PdfController::class,
-        'room' => RoomController::class
+        'pdf' => PdfController::class
     ]);
+
 

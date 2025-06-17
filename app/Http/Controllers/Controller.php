@@ -9,6 +9,7 @@ use App\Models\Topic_folder;
 use App\Models\Note;
 use App\Models\Room;
 use App\Models\Relation;
+use App\Models\Relation_room;
 use App\Models\Relation_notification;
 use App\Models\User;
 use App\Api;
@@ -23,16 +24,17 @@ class Controller extends BaseController
 
     // dd($data_notifcation,$owner_id);
     // dd($notify_id,$data_notifcation,$owner_id);
-    Relation::create([
+    Relation_room::create([
         'user_id' => $data_notifcation->user_id,
         'room_id' => $data_notifcation->data_id,
         'partner_id' => $data_notifcation->partner_id,
         'owner_id' => $owner_id,
+        'role' => 3
     ]);
 
     Relation_notification::where('id', $notify_id)->delete();
 
-    return redirect()->route('room.index', $notify_id)->withSuccess("Soliciataçõ de amizade aceita com sucesso.");
+    return redirect()->route('room.index', $notify_id)->withSuccess("Soliciatação de amizade aceita com sucesso.");
 
 }
 
