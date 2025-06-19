@@ -55,10 +55,8 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        // dd('caiu');
         $data = $request->all();
-        $content = Http::timeout(120)->get(Api::endpoint().'/add_material/'.$data['name_topic'].'/'.$data['descricao'].'/'.$data['level']);
-
+        $content = Http::timeout(120)->get(Api::endpoint().'/add_material/'.urlencode($data['name_topic']).'/'.urlencode($data['descricao']).'/'.urlencode($data['level']));
         if ($content->successful()){
             $this->addMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
             return redirect()->back()->withSuccess('Material adicionado com sucesso.');

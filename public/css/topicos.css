@@ -1028,6 +1028,42 @@ p, div, span, li, td, th {
     .partner-actions {
         flex-direction: column;
     }
+
+.empty-state {
+    color: #5a5a72;
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    margin: 1.5rem auto;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e0e3e8;
+    grid-column: 1 / -1; /* Ocupa todas as colunas do grid */
+    justify-self: center; /* Centraliza horizontalmente no grid */
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: #6c6d8b;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-state h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+
 }
 
 /* ===== ANIMAÇÕES ===== */

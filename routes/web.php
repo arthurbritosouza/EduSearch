@@ -21,13 +21,14 @@ use App\Models\Pdf_folder;
 
 require base_path('routes/login.php');
 
-require base_path('routes/base.php');
-require base_path('routes/room.php');
+Route::middleware(['auth'])->group(function () {
+    require base_path('routes/base.php');
+    require base_path('routes/room.php');
+    require base_path('routes/topic.php');
+    require base_path('routes/material.php');
+    require base_path('routes/profile.php');
 
-    Route::resources([
-        'topic' => TopicController::class,
-        'material' => MaterialController::class,
-        'pdf' => PdfController::class
-    ]);
-
-
+        Route::resources([
+            'pdf' => PdfController::class
+        ]);
+});

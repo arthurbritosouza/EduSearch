@@ -181,3 +181,12 @@ window.askQuestion = (question) => {
         sendMessage();
     }
 };
+
+function switchToTab(tabId) {
+    const tab = document.querySelector(`#${tabId}`);
+    if (tab) {
+        const tabInstance = new bootstrap.Tab(tab);
+        tabInstance.show();
+    }
+}
+
