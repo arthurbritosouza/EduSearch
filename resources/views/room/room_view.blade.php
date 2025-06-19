@@ -289,6 +289,7 @@ EduSearch - Sala de Estudos
                 <form action="{{route('create_notification')}}" method="POST">
                     @csrf
                     <input type="hidden" name="room_id" value="{{$room->id}}">
+                    <input type="hidden" name="type" value=2>
                     <div class="mb-3">
                         <label for="memberEmail" class="form-label">E-mail do Convidado</label>
                         <input type="email" class="form-control" name="email" placeholder="exemplo@email.com" required>

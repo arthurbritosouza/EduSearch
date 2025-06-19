@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- OU Font Awesome 5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     @yield('style')
 </head>
@@ -24,177 +29,25 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="sidebar" id="sidebar">
-                <div>
-                    <div class="logo">
-                        <i class="bi bi-book"></i> EduSearch
-                    </div>
-                    <ul class="nav flex-column mt-4">
-                        <!-- Dashboard -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/home">
-                                <i class="bi bi-house-door"></i>
-                                <span class="nav-text">Dashboard</span>
-                            </a>
-                        </li>
-
-                        <!-- Divisor -->
-                        <li class="nav-divider"></li>
-
-                        <!-- Gaveta de Estudos -->
-                        <li class="nav-item nav-drawer">
-                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#estudosDrawer" aria-expanded="false">
-                                <i class="bi bi-mortarboard"></i>
-                                <span class="nav-text">Estudos</span>
-                                <i class="bi bi-chevron-down drawer-arrow"></i>
-                            </a>
-                            <div class="collapse drawer-content" id="estudosDrawer">
-                                <ul class="nav flex-column drawer-menu">
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="{{route('topic.index')}}">
-                                            <i class="bi bi-folder2-open"></i>
-                                            <span class="nav-text">Meus Tópicos</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="{{route('pdf.index')}}">
-                                            <i class="bi bi-file-earmark-pdf"></i>
-                                            <span class="nav-text">Biblioteca de PDFs</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/favoritos">
-                                            <i class="bi bi-bookmark-heart"></i>
-                                            <span class="nav-text">Favoritos</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <!-- Gaveta Colaborativa -->
-                        <li class="nav-item nav-drawer">
-                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#colaborativoDrawer" aria-expanded="false">
-                                <i class="bi bi-people"></i>
-                                <span class="nav-text">Colaborativo</span>
-                                <i class="bi bi-chevron-down drawer-arrow"></i>
-                            </a>
-                            <div class="collapse drawer-content" id="colaborativoDrawer">
-                                <ul class="nav flex-column drawer-menu">
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="{{route('room.index')}}">
-                                            <i class="bi bi-door-open"></i>
-                                            <span class="nav-text">Salas de Estudo</span>
-                                            <span class="badge bg-success ms-auto">3</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/comunidade">
-                                            <i class="bi bi-share"></i>
-                                            <span class="nav-text">Comunidade</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/grupos">
-                                            <i class="bi bi-people-fill"></i>
-                                            <span class="nav-text">Meus Grupos</span>
-                                            <span class="badge bg-primary ms-auto">2</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <!-- Gaveta de Ferramentas -->
-                        <li class="nav-item nav-drawer">
-                            <a class="nav-link drawer-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#ferramentasDrawer" aria-expanded="false">
-                                <i class="bi bi-tools"></i>
-                                <span class="nav-text">Ferramentas</span>
-                                <i class="bi bi-chevron-down drawer-arrow"></i>
-                            </a>
-                            <div class="collapse drawer-content" id="ferramentasDrawer">
-                                <ul class="nav flex-column drawer-menu">
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/chat-ia">
-                                            <i class="bi bi-robot"></i>
-                                            <span class="nav-text">Chat com IA</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/resumos">
-                                            <i class="bi bi-journal-text"></i>
-                                            <span class="nav-text">Gerador de Resumos</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link drawer-item" href="/flashcards">
-                                            <i class="bi bi-card-text"></i>
-                                            <span class="nav-text">Flashcards</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <!-- Divisor -->
-                        <li class="nav-divider"></li>
-
-                        <!-- Configurações -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="/perfil">
-                                <i class="bi bi-person-circle"></i>
-                                <span class="nav-text">Meu Perfil</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link d-flex justify-content-between align-items-center" href="{{route('notifications')}}">
-                                <div>
-                                    <i class="bi bi-bell"></i>
-                                    <span class="nav-text">Notificações</span>
-                                </div>
-                                <span class="badge bg-danger rounded-pill">3</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/configuracoes">
-                                <i class="bi bi-gear"></i>
-                                <span class="nav-text">Configurações</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout" id="logoutButton">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span class="nav-text">Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                @auth
-                <div class="sidebar-footer">
-                    <div class="user-profile">
-                        <div class="user-avatar">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">{{ auth()->user()->name ?? 'Usuário' }}</div>
-                            <div class="user-email">{{ auth()->user()->email ?? '' }}</div>
-                        </div>
-                        <div class="user-actions">
-                            <button class="btn btn-sm btn-outline-light" title="Configurações">
-                                <i class="bi bi-gear"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @endauth
-            </div>
+            @include('include.sidebar')
             <main id="main-content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="dashboard-header">
+                <div class="dashboard-header position-relative">
+                    @if(url()->previous() !== url()->current())
+                    <a href="{{ url()->previous() }}" class="btn position-absolute d-flex align-items-center justify-content-center" style="top: 12px; left: 15px; width: 32px; height: 32px; z-index: 10;
+                  background: white; border: none;" title="Voltar">
+                        <i class="fas fa-arrow-left" style="font-size: 14px; color: #495057;"></i>
+                    </a>
+                    @else
+                    <a href="{{ route('home') }}" class="btn position-absolute d-flex align-items-center justify-content-center" style="top: 12px; left: 15px; width: 32px; height: 32px; z-index: 10;
+                  background: white; border: none;" title="Dashboard">
+                        <i class="fas fa-home" style="font-size: 14px; color: #495057;"></i>
+                    </a>
+                    @endif
+
                     <div class="row align-items-center">
-                        @yield('header_content')
+                        <div class="col-md-8 ps-5">
+                            @yield('header_content')
+                        </div>
                         <div class="col-md-4 text-end">
                             <div class="user-welcome">
                                 <span class="welcome-text">Bem-vindo, <strong>{{auth()->user()->name}}</strong></span>
@@ -203,6 +56,8 @@
                         </div>
                     </div>
                 </div>
+
+
                 <!-- Alertas -->
                 @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -226,6 +81,8 @@
             </main>
         </div>
     </div>
+    @yield('modals')
+
     <script>
         // Atualizar horário em tempo real
         function updateTime() {

@@ -9,82 +9,31 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
 <link rel="stylesheet" href="{{ asset('css/pdf-viewer.css') }}">
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/pdf-upload.css') }}">
+<link rel="stylesheet" href="{{ asset('css/room-related.css') }}">
 @endsection
 
 @section('content')
-<!-- Overlay para mobile -->
-<div class="overlay" id="overlay"></div>
-
-
-
-<!-- Header da Página -->
-<div class="pdf-header mb-4">
-    <div class="header-content d-flex flex-wrap justify-content-between align-items-center">
-        <div class="header-info">
-            <div class="breadcrumb-nav">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a href="/home"><i class="bi bi-house"></i> Home</a></li>
-                        <li class="breadcrumb-item"><a href="/biblioteca-pdf">Biblioteca PDF</a></li>
-                        <li class="breadcrumb-item active">{{ $pdf_data->title ?? 'Documento PDF' }}</li>
-                    </ol>
-                </nav>
-            </div>
-            <h1 class="page-title mb-1">
-                <i class="bi bi-file-earmark-pdf-fill me-2"></i>
-                {{ $pdf->name ?? 'Documento PDF' }}
-            </h1>
-            <div class="pdf-meta mb-2">
-                <span class="meta-item me-3">
-                    <i class="bi bi-file-text me-1"></i>
-                    {{ $pdf->pages ?? 0 }} páginas
-                </span>
-                <span class="meta-item me-3">
-                    <i class="bi bi-calendar me-1"></i>
-                    Processado em {{ \Carbon\Carbon::parse($pdf->created_at ?? now())->format('d/m/Y') }}
-                </span>
-                <span class="meta-item">
-                    <i class="bi bi-robot me-1"></i>
-                    IA Processada
-                </span>
-            </div>
-        </div>
-        <div class="header-actions d-flex align-items-center gap-2">
-            <button class="btn btn-outline-light" id="downloadPdf">
-                <i class="bi bi-download"></i> Download
-            </button>
-            <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#shareModal">
-                <i class="bi bi-share"></i> Compartilhar
-            </button>
-            <div class="dropdown">
-                <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" id="printPdf"><i class="bi bi-printer me-2"></i>Imprimir</a></li>
-                    <li><a class="dropdown-item" href="#" id="exportNotes"><i class="bi bi-journal-text me-2"></i>Exportar Anotações</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="bi bi-trash me-2"></i>Excluir</a></li>
-                </ul>
-            </div>
-        </div>
+@section('header_content')
+<div class="col-md-8">
+    <h1 class="dashboard-title">
+        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Sala de Estudos:
+    </h1>
+    <div class="pdf-meta mb-2">
+        <span class="meta-item me-3">
+            <i class="bi bi-file-text me-1"></i>
+            {{ $pdf->pages ?? 0 }} páginas
+        </span>
+        <span class="meta-item me-3">
+            <i class="bi bi-calendar me-1"></i>
+            Processado em {{ \Carbon\Carbon::parse($pdf->created_at ?? now())->format('d/m/Y') }}
+        </span>
+        <span class="meta-item">
+            <i class="bi bi-robot me-1"></i>
+            IA Processada
+        </span>
     </div>
 </div>
-
-<!-- Alertas -->
-@if ($errors->any())
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong><i class="bi bi-exclamation-triangle me-2"></i>Erro:</strong>
-    <ul class="mb-0">
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-@endif
+@endsection
 
 <!-- Navegação por Abas -->
 <div class="tabs-container mb-3">
@@ -119,6 +68,12 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                 <span>Anotações</span>
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="rooms-tab" data-bs-toggle="tab" data-bs-target="#rooms" type="button" role="tab">
+                <i class="bi bi-house-door"></i>
+                <span>Salas</span>
+            </button>
+        </li>
     </ul>
 </div>
 
@@ -127,19 +82,19 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
     <div class="tab-pane fade show active" id="overview" role="tabpanel">
         <div class="overview-container">
             <div class="row g-4">
-                <!-- Resumo do PDF -->
+                <!-- Resumo e Ações -->
                 <div class="col-lg-8">
                     <div class="summary-card card mb-4">
                         <div class="card-header">
-                            <h3><i class="bi bi-file-earmark-text me-2"></i>Resumo do Documento</h3>
+                            <h3><i class="bi bi-file-earmark-text me-2"></i>Visão Geral do Documento</h3>
                         </div>
                         <div class="card-body">
                             <div class="summary-content">
-                                <p>{{ $pdf_data->summary ?? 'Este documento foi processado pela IA e está pronto para interação. Use o chat para fazer perguntas específicas sobre o conteúdo ou explore as ferramentas de estudo disponíveis.' }}</p>
+                                <p>{{ $pdf_data->summary ?? 'Este documento está pronto para interação com IA. Explore o conteúdo, faça perguntas ou utilize as ferramentas de estudo para maximizar seu aprendizado.' }}</p>
                             </div>
                             <div class="summary-actions mt-3">
                                 <button class="btn btn-primary" onclick="switchToTab('chat-tab')">
-                                    <i class="bi bi-chat-dots me-2"></i>Conversar com PDF
+                                    <i class="bi bi-chat-dots me-2"></i>Conversar com o Documento
                                 </button>
                                 <button class="btn btn-outline-secondary" onclick="switchToTab('study-tab')">
                                     <i class="bi bi-book me-2"></i>Ferramentas de Estudo
@@ -147,7 +102,7 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                             </div>
                         </div>
                     </div>
-                    <!-- Informações Técnicas -->
+                    <!-- Informações Técnicas Simplificadas -->
                     <div class="tech-info-card card">
                         <div class="card-header">
                             <h4><i class="bi bi-info-circle me-2"></i>Informações Técnicas</h4>
@@ -163,22 +118,14 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                                         <strong>Número de páginas:</strong>
                                         <span>{{ $pdf->pages ?? '45' }} páginas</span>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="info-item mb-2">
                                         <strong>Idioma detectado:</strong>
                                         <span>{{ $pdf->language }}</span>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="info-item mb-2">
-                                        <strong>Processamento IA:</strong>
-                                        <span class="badge bg-success">Concluído</span>
-                                    </div>
-                                    <div class="info-item mb-2">
-                                        <strong>Palavras analisadas:</strong>
-                                        <span>{{ $pdf->words ?? '2.5 MB' }}</span>
-                                    </div>
-                                    <div class="info-item mb-2">
-                                        <strong>Data de pesquisa:</strong>
+                                        <strong>Data de processamento:</strong>
                                         <span>{{ \Carbon\Carbon::parse($pdf->created_at ?? now())->format('d/m/Y') }}</span>
                                     </div>
                                 </div>
@@ -186,41 +133,15 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                         </div>
                     </div>
                 </div>
-                <!-- Sidebar com Estatísticas -->
+                <!-- Sidebar com Tópicos e Ações -->
                 <div class="col-lg-4">
-                    <div class="stats-sidebar">
-                        <!-- Estatísticas do PDF -->
-                        <div class="stats-widget card mb-4">
-                            <div class="card-body">
-                                <h4>Estatísticas do Documento</h4>
-                                <div class="stats-grid row row-cols-2 g-3 mt-2">
-                                    <div class="stat-item col">
-                                        <i class="bi bi-file-text"></i>
-                                        <span class="stat-number">{{ $pdf_data->word_count ?? '12.5k' }}</span>
-                                        <span class="stat-label">Palavras</span>
-                                    </div>
-                                    <div class="stat-item col">
-                                        <i class="bi bi-chat-dots"></i>
-                                        <span class="stat-number">{{ $pdf_data->chat_count ?? '0' }}</span>
-                                        <span class="stat-label">Conversas</span>
-                                    </div>
-                                    <div class="stat-item col">
-                                        <i class="bi bi-journal"></i>
-                                        <span class="stat-number">{{ $pdf_data->notes_count ?? '0' }}</span>
-                                        <span class="stat-label">Anotações</span>
-                                    </div>
-                                    <div class="stat-item col">
-                                        <i class="bi bi-bookmark"></i>
-                                        <span class="stat-number">{{ $pdf_data->bookmarks_count ?? '0' }}</span>
-                                        <span class="stat-label">Marcadores</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="actions-sidebar">
                         <!-- Tópicos Principais -->
                         <div class="topics-widget card mb-4">
                             <div class="card-body">
-                                <h4 class="widget-header">Tópicos Principais</h4>
+                                <h4 class="widget-header">
+                                    <i class="bi bi-tags me-2"></i>Tópicos Principais
+                                </h4>
                                 <div class="topics-list">
                                     @if(isset($pdf_data->main_topics))
                                     @foreach($pdf_data->main_topics as $topic)
@@ -248,7 +169,9 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                         <!-- Ações Rápidas -->
                         <div class="quick-actions-widget card">
                             <div class="card-body">
-                                <h4 class="widget-header">Ações Rápidas</h4>
+                                <h4 class="widget-header">
+                                    <i class="bi bi-lightning me-2"></i>Ações Rápidas
+                                </h4>
                                 <div class="actions-list d-grid gap-2">
                                     <button class="action-btn btn btn-outline-primary" onclick="generateQuiz()">
                                         <i class="bi bi-question-circle"></i>
@@ -274,6 +197,7 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
             </div>
         </div>
     </div>
+
 
     <!-- Aba Conteúdo Extraído -->
     <div class="tab-pane fade" id="content" role="tabpanel">
@@ -508,6 +432,95 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="rooms" role="tabpanel">
+        <div class="rooms-container">
+            <div class="rooms-header">
+                <div class="header-info">
+                    <h3>Salas de Estudo</h3>
+                    <p>Explore salas de discussão e grupos de estudo relacionados a {{ $pdf->name }}</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                    <i class="bi bi-plus-circle me-2"></i>Criar Nova Sala
+                </button>
+            </div>
+
+            <div class="rooms-grid">
+                {{-- Dados Estáticos para Visualização --}}
+                <div class="room-card">
+                    <div class="room-icon">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <div class="room-info">
+                        <h5 class="room-name">Sala de Estudo: Tópico X</h5>
+                        <p class="room-description">Discussão aprofundada sobre conceitos fundamentais de {{ $pdf->name }}. Ideal para iniciantes.</p>
+                        <span class="room-meta">
+                            <i class="bi bi-people"></i> 15 Membros
+                        </span>
+                    </div>
+                    <div class="room-actions">
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="room-card">
+                    <div class="room-icon">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <div class="room-info">
+                        <h5 class="room-name">Preparação para Provas</h5>
+                        <p class="room-description">Grupo focado em resolver exercícios e revisar para as próximas avaliações. Nível intermediário.</p>
+                        <span class="room-meta">
+                            <i class="bi bi-people"></i> 23 Membros
+                        </span>
+                    </div>
+                    <div class="room-actions">
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="room-card">
+                    <div class="room-icon">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <div class="room-info">
+                        <h5 class="room-name">Desafios Avançados</h5>
+                        <p class="room-description">Espaço para discussão de problemas complexos e tópicos avançados em {{ $pdf->name }}.</p>
+                        <span class="room-meta">
+                            <i class="bi bi-people"></i> 8 Membros
+                        </span>
+                    </div>
+                    <div class="room-actions">
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+                        </a>
+                    </div>
+                </div>
+
+                <div class="room-card">
+                    <div class="room-icon">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <div class="room-info">
+                        <h5 class="room-name">Recursos e Dicas</h5>
+                        <p class="room-description">Compartilhamento de materiais adicionais, artigos e dicas de estudo para o tópico.</p>
+                        <span class="room-meta">
+                            <i class="bi bi-people"></i> 30 Membros
+                        </span>
+                    </div>
+                    <div class="room-actions">
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+                        </a>
+                    </div>
+                </div>
+                {{-- Fim dos Dados Estáticos --}}
             </div>
         </div>
     </div>

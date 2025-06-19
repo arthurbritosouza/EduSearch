@@ -24,7 +24,7 @@ app.add_middleware(
 
 @app.get("/new_topic_folder/{topico}")
 def new_topic_folder(topico):
-        
+
     prompt_mateira = PromptTemplate(
         input_variables=['topico'],
         template='''Quero que retorne apenas a matéria desse tópico {topico}.
@@ -33,7 +33,7 @@ def new_topic_folder(topico):
     )
     chain_materia = prompt_mateira | llm | StrOutputParser()
     materia_topico = chain_materia.invoke({'topico': topico})
-    
+
     prompt_resumo = PromptTemplate(
         input_variables=['topico'],
         template='''Quero que retorne apenas o resumo da matéria {topico}.
@@ -43,11 +43,11 @@ def new_topic_folder(topico):
         ''')
     chain_resumo = prompt_resumo | llm | StrOutputParser()
     resumo = chain_resumo.invoke({'topico': topico})
-    
+
     sobre = resumo_topico(topico)
     topics = topicos(topico)
     materiais = material(topico)
-    
+
     return materia_topico,resumo,sobre,topics,materiais
 
 
@@ -86,7 +86,7 @@ def topicos(topico):
         Liste 3 tópicos complexos para praticantes experientes, destacando aplicações sofisticadas, técnicas especializadas ou desenvolvimentos recentes na área.
         '''
     )
-            
+
     chain = prompt_translate_topico | llm | StrOutputParser()
     response = chain.invoke({f'topico': topico})
     return response
@@ -95,7 +95,7 @@ def topicos(topico):
 def material(topico):
     levels = ['iniciante', 'intermediario', 'avancado']
     content_level = []
-    
+
     for level in levels:
         # Ajuste o template conforme o nível
         if level == 'iniciante':
@@ -155,7 +155,7 @@ def material(topico):
         chain_material = prompt_material | llm | StrOutputParser()
         content = chain_material.invoke({"topico": topico})
         print(content)
-        
+
         content_level.append({level: content})
     print(content_level)
     return content_level
@@ -171,7 +171,7 @@ Você é um especialista na área de {topico} e precisa criar um material didát
 
 Elabore um texto explicativo que:
 - Aborde os pontos principais da descrição;
-- Seja claro, objetivo e adequado ao nível {nivel};     
+- Seja claro, objetivo e adequado ao nível {nivel};
 no seu texto deve ter:
 1. Aprofundar conceitos que vão além do básico, assumindo que o leitor já domina os fundamentos
 2. Explorar conexões entre diferentes conceitos dentro de {topico}
@@ -193,15 +193,15 @@ Retorne apenas o texto final.
     print(material)
     print(190*'-')
     print(material)
-    
+
     return material
 
 @app.get('/exercise_generator/{topico}/{level}/{quantidade}')
-def gerar_exercicios(topico: str, level: str, quantidade: int): 
+def gerar_exercicios(topico: str, level: str, quantidade: int):
     ex = quantidade
     titulo_ex = []
     questao = []
-    
+
     while ex != 0:
         time.sleep(1)
         print("num: ", ex)
@@ -225,13 +225,13 @@ def gerar_exercicios(topico: str, level: str, quantidade: int):
 
         chain_titulo = prompt_titulo | llm | StrOutputParser()
         titulo = chain_titulo.invoke({
-            'topico': topico, 
-            'level': level, 
+            'topico': topico,
+            'level': level,
             'quantidade': quantidade,
             'titulo_ex': titulo_ex
         })
-        
-        
+
+
         prompt_alternativas = PromptTemplate(
         input_variables=["titulo"],
         template='''Faça 4 alternativas para o exercício abaixo, quero que tenha apenas uma alternativa correta, e não mostre a alternativa correta.
@@ -247,9 +247,9 @@ def gerar_exercicios(topico: str, level: str, quantidade: int):
         alternativas = chain_alternativa.invoke({
             'titulo': titulo
         })
-        
+
         split_alternativas = alternativas.split("\n")
-        
+
         prompt_resolucao = PromptTemplate(
         input_variables=["titulo","alternativas"],
         template='''Faça a resolução do exercício abaixo e mostre a alternatica correta:
@@ -264,7 +264,7 @@ def gerar_exercicios(topico: str, level: str, quantidade: int):
             'titulo': titulo,
             'alternativas': alternativas
         })
-        
+
         prompt_correta = PromptTemplate(
         input_variables=["titulo","alternativas"],
         template='''dentre esssas alternativas eu quero que retorne apenas a alternativa correta:
@@ -281,15 +281,15 @@ def gerar_exercicios(topico: str, level: str, quantidade: int):
             'titulo': titulo,
             'alternativas': alternativas
         })
-        
-        
+
+
         exericio = {
             'titulo': titulo,
             'alternativas': split_alternativas,
             'resolucao': resolucao,
             'correta': questão_correta
         }
-        
+
         print(titulo)
         print(120*"=")
         print(alternativas)
@@ -324,28 +324,28 @@ pergunta: {pergunta}
 
 
 class pdf_content:
-    
+
     def extract_text(pdf):
         contents = pdf.read()
         pdf_content = PdfReader(pdf)
         text = ""
         for page_num in range(len(pdf_content.pages)):
             page = pdf_content.pages[page_num]
-            text += page.extract_text() 
+            text += page.extract_text()
         return {'text': text,
                 'size':len(contents),
                 'pages':len(pdf_content.pages)
                 }
-    
+
 def extract_pdf_text(user_id,title,chat=False):
-    storage_path = f"/var/www/html/storage/app/pdfs/{user_id}/{title}.pdf" 
+    storage_path = f"/var/www/html/storage/app/pdfs/{user_id}/{title}.pdf"
     with open(storage_path, "rb") as f:
         pdf_items = pdf_content.extract_text(f)
         print(pdf_items['text'])
-    
+
     print(120*"-")
     print(f"Tamanho do arquivo: {pdf_items['size']} bytes")
-    return {"size": pdf_items['size'], 
+    return {"size": pdf_items['size'],
             "words": len(pdf_items['text']),
             "pages": pdf_items['pages'],
             "text": pdf_items['text']
@@ -372,7 +372,7 @@ def content_pdf(text):
     chain = prompt_content | llm | StrOutputParser()
     content_response = chain.invoke({'text': text})
     return content_response
-     
+
 def summary_pdf(text):
     prompt_summary = PromptTemplate(
         input_variables=["text"],
@@ -408,9 +408,9 @@ async def new_pdf_folder(user_id,title):
     print(content)
     print(120*"-")
     print("LINGUAGEM:",language)
-    
+
     # Aqui você pode salvar ou processar o PDF
-    return {"size": data_pdf['size'], 
+    return {"size": data_pdf['size'],
             "content": content,
             "summary": summary,
             "words": len(data_pdf['text']),
@@ -425,29 +425,29 @@ async def chat_file(msg,user_id,title):
     data_pdf = extract_pdf_text(user_id,title)
     char_split = CharacterTextSplitter(chunk_size=2000, chunk_overlap=500, separator=" ")
     splits = char_split.split_text(data_pdf['text'])
-    
+
     embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vectorstore = InMemoryVectorStore.from_texts(texts=splits,embedding=embedding_model)
     retriever = vectorstore.as_retriever(search_type="mmr", k=10)
-    
+
     result = retriever.invoke(msg)
     print(result)
-    
+
     prompt = PromptTemplate(
         input_variables=["question", "context"],
-        template = """Você é um assistente de IA especializado em responder perguntas sobre documentos e conteúdos técnicos.  
+        template = """Você é um assistente de IA especializado em responder perguntas sobre documentos e conteúdos técnicos.
         Sua resposta deve ser clara, detalhada e visualmente organizada, usando Markdown para destacar títulos, tópicos e exemplos.
 
-        **Contexto fornecido:**  
+        **Contexto fornecido:**
         {context}
 
-        **Pergunta do usuário:**  
+        **Pergunta do usuário:**
         {question}
 
-        **Resposta (use Markdown para deixar o texto mais bonito e fácil de ler):**  
+        **Resposta (use Markdown para deixar o texto mais bonito e fácil de ler):**
         """
     )
     chain = prompt | llm | StrOutputParser()
     response = chain.invoke({'question': msg, 'context': result})
     return response
-    
+

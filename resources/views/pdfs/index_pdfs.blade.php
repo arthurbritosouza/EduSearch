@@ -9,13 +9,16 @@
     <link rel="stylesheet" href="{{ asset('css/pdf-upload.css') }}">
 @endsection
 
-@section('content')
-    <!-- Mensagem de boas-vindas -->
-    <div class="welcome-message">
-        <h2><i class="bi bi-file-earmark-pdf-fill me-2"></i>Biblioteca de PDFs</h2>
-        <p class="mb-0">Gerencie seus PDFs e explore materiais compartilhados pela comunidade. Todos processados com IA para melhor experiência de estudo.</p>
+@section('header_content')
+    <div class="col-md-8">
+        <h1 class="dashboard-title">
+            <i class="bi bi-file-earmark-pdf me-3"></i>Biblioteca de PDFs
+        </h1>
+        <p class="dashboard-subtitle">Gerencie seus PDFs e explore materiais compartilhados pela comunidade</p>
     </div>
+@endsection
 
+@section('content')
     <!-- Barra de pesquisa -->
     <div class="search-container">
         <h4 class="mb-4"><i class="bi bi-search me-2"></i>Pesquisar PDFs</h4>
@@ -35,47 +38,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Seção de PDFs Meus -->
-            <!-- Seção de PDFs Estáticos -->
-        <div class="pdf-library-section mb-5">
-            <div class="row">
-                <div class="col-12">
-                    <div class="pdf-library-card">
-                        <div class="library-header">
-                            <h4><i class="bi bi-collection me-2"></i>Biblioteca de PDFs</h4>
-                            <span class="badge bg-info">{{ isset($pdfs) ? count($pdfs) : 0 }} PDFs</span>
-                        </div>
-                        <div class="library-content">
-                            <div class="row g-3">
-                                @foreach($pdfs as $pdf)
-                                <div class="col-md-4">
-                                    <div class="pdf-item">
-                                        <div class="pdf-icon">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i>
-                                        </div>
-                                        <div class="pdf-info">
-                                            <h6>{{$pdf->name}}</h6>
-                                            <p>{{$pdf->summary}}</p>
-                                            <small class="text-muted">Processado pela IA • {{$pdf->pages}} páginas</small>
-                                        </div>
-                                        <div class="pdf-actions">
-                                            <a href="/pdf/{{$pdf->id}}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-success">
-                                                <i class="bi bi-chat-dots"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     <!-- Estatísticas -->
     <div class="row mb-5">
@@ -105,6 +67,46 @@
                 <i class="bi bi-download"></i>
                 <h3>156</h3>
                 <p>Downloads</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de PDFs Meus -->
+    <div class="pdf-library-section mb-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="pdf-library-card">
+                    <div class="library-header">
+                        <h4><i class="bi bi-collection me-2"></i>Biblioteca de PDFs</h4>
+                        <span class="badge bg-info">{{ isset($pdfs) ? count($pdfs) : 0 }} PDFs</span>
+                    </div>
+                    <div class="library-content">
+                        <div class="row g-3">
+                            @foreach($pdfs as $pdf)
+                            <div class="col-md-4">
+                                <div class="pdf-item">
+                                    <div class="pdf-icon">
+                                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                                    </div>
+                                    <div class="pdf-info">
+                                        <h6>{{$pdf->name}}</h6>
+                                        <p>{{$pdf->summary}}</p>
+                                        <small class="text-muted">Processado pela IA • {{$pdf->pages}} páginas</small>
+                                    </div>
+                                    <div class="pdf-actions">
+                                        <a href="/pdf/{{$pdf->id}}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-chat-dots"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

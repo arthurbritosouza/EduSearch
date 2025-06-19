@@ -15,6 +15,69 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
+Route::resource('topic', TopicController::class);
+
+Route::post('addAnnotation', [TopicController::class, 'addAnnotation'])->name('topic.addAnnotation');
+Route::delete('deleteAnnotation', [TopicController::class, 'deleteAnnotation'])->name('topic.deleteAnnotation');
+
+Route::post('/exercise_generator',[TopicController::class,'exercise_generator'])->name('topic.exercise_generator');
+Route::post('/relations',[TopicController::class,'relations'])->name('topic.relations');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Route::post('/verificar-resposta', function (Request $request)
 {
     try {
@@ -71,7 +134,3 @@ Route::get('/excluir_anotacao/{id}', function ($id)
     return redirect()->back()->withErrors('Anotação excluída com sucesso!');
 })->name('excluir_anotacao');
 
-Route::get('logout', [LoginController::class, 'logout']);
-Route::post('/exercise_generator',[Controller::class,'exercise_generator'])->name('exercise_generator');
-Route::post('/relations',[Controller::class,'relations'])->name('relations');
-Route::post('/add_anotacao', [Controller::class, 'add_anotacao'])->name('add_anotacao');

@@ -1,0 +1,95 @@
+.rooms-container {
+    padding: 1rem;
+}
+
+.rooms-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.rooms-header .header-info h3 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.rooms-header .header-info p {
+    margin: 0.25rem 0 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+/* Card das salas */
+.room-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.room-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+}
+
+.room-icon {
+    font-size: 2.25rem;
+    color: #0d6efd; /* Azul Bootstrap primário */
+    margin-bottom: 0.75rem;
+    align-self: flex-start;
+}
+
+.room-info {
+    flex-grow: 1;
+}
+
+.room-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.5rem;
+}
+
+.room-description {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.room-meta {
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.room-meta i {
+    font-size: 1.1rem;
+    color: #0d6efd;
+}
+
+.room-actions {
+    margin-top: auto;
+    text-align: right;
+}
+
+.room-actions .btn {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+}
