@@ -28,6 +28,7 @@ EduSearch - Salas de Estudo
 
 <!-- Lista de Salas -->
 <div class="row g-4">
+    @if($rooms->count() > 0)
     @foreach($rooms as $room)
     <div class="col-lg-4 col-md-6">
         <div class="navigation-card estudos">
@@ -37,8 +38,8 @@ EduSearch - Salas de Estudo
             </div>
             <div class="nav-card-body">
                 <p>{{$room->description}}</p>
-                <span class="badge bg-success">12 participantes</span>
-                <span class="badge bg-primary ms-2">5 online</span>
+                <span class="badge bg-success"> {{ $participantsByRoom->get($room->id, collect())->count() }} participantes </span>
+                {{-- <span class="badge bg-primary ms-2">5 online</span> --}}
                 <div class="mt-3">
                     <a href="{{route('room.show',$room->id)}}" class="btn btn-outline-primary btn-sm">Entrar</a>
                 </div>
@@ -46,6 +47,18 @@ EduSearch - Salas de Estudo
         </div>
     </div>
     @endforeach
+    @else
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="bi bi-door-open text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 text-muted">Nenhuma sala encontrada</h4>
+            <p class="text-muted">Você ainda não participa de nenhuma sala de estudo.</p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salaModal">
+                <i class="bi bi-plus-circle me-2"></i>Criar sua primeira sala
+            </button>
+        </div>
+    </div>
+    @endif
 </div>
 
 <!-- Modal Criar/Entrar em Sala -->

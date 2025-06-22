@@ -104,7 +104,9 @@
                         <i class="bi bi-bell"></i>
                         <span class="nav-text">Notificações</span>
                     </div>
-                    <span class="badge bg-danger rounded-pill">3</span>
+                    @if(isset($notificationCount) && $notificationCount > 0)
+                    <span class="badge bg-danger">{{ $notificationCount }}</span>
+                    @endif
                 </a>
             </li>
             <li class="nav-item">

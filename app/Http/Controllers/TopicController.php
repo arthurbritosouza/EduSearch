@@ -104,7 +104,6 @@ class TopicController extends Controller
             ->select('topic_folders.*')
             ->distinct()
             ->first();
-        // dd($data_topic);
 
         $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
         ->leftJoin('room_contents', function($join) {
@@ -118,7 +117,6 @@ class TopicController extends Controller
                         ->orWhere('relations.owner_id', auth()->user()->id)
                         ->orWhere('relations.partner_id', auth()->user()->id)
                         ->orWhere('relation_rooms.partner_id', auth()->user()->id);
-
         })
         ->select('exercises.*')
         ->distinct()

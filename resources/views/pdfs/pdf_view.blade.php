@@ -16,7 +16,7 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
 @section('header_content')
 <div class="col-md-8">
     <h1 class="dashboard-title">
-        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Sala de Estudos:
+        <i class="bi bi-file-earmark-pdf-fill me-2"></i>{{ $pdf->name }}
     </h1>
     <div class="pdf-meta mb-2">
         <span class="meta-item me-3">

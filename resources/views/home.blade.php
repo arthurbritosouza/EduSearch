@@ -8,24 +8,126 @@ EduSearch - Dashboard Principal
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 <style>
-    .stats-card-large { box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-radius: 12px; padding: 28px 0; text-align: center; transition: box-shadow .2s; }
-    .stats-card-large:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
-    .stats-icon { font-size: 2.8rem; margin-bottom: 10px; }
-    .quick-action-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); transition: box-shadow .2s, background .2s; background: #fff; border: none; width: 100%; padding: 28px 0; text-align: center; }
-    .quick-action-card:hover { background: #f8f9fa; box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
-    .action-icon { font-size: 2.2rem; margin-bottom: 10px; }
-    .navigation-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); background: #fff; padding: 24px; margin-bottom: 24px; }
-    .nav-card-header { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 600; margin-bottom: 18px; }
-    .nav-link-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; color: #495057; text-decoration: none; border-bottom: 1px solid #f1f1f1; transition: background .2s; }
-    .nav-link-item:last-child { border-bottom: none; }
-    .nav-link-item:hover { background: #f8f9fa; color: #0f4c81; }
-    .recent-activity-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); background: #fff; padding: 24px; }
-    .activity-item { display: flex; align-items: flex-start; gap: 16px; border-bottom: 1px solid #f1f1f1; padding: 16px 0; }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-icon { font-size: 2rem; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa; }
-    .activity-content h6 { font-weight: 600; margin-bottom: 2px; }
-    .activity-content p { font-size: 0.95rem; color: #666; margin-bottom: 2px; }
-    .activity-content small { color: #999; }
+    .stats-card-large {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border-radius: 12px;
+        padding: 28px 0;
+        text-align: center;
+        transition: box-shadow .2s;
+    }
+
+    .stats-card-large:hover {
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+    }
+
+    .stats-icon {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+    }
+
+    .quick-action-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        transition: box-shadow .2s, background .2s;
+        background: #fff;
+        border: none;
+        width: 100%;
+        padding: 28px 0;
+        text-align: center;
+    }
+
+    .quick-action-card:hover {
+        background: #f8f9fa;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+    }
+
+    .action-icon {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .navigation-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        background: #fff;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .nav-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .nav-link-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        color: #495057;
+        text-decoration: none;
+        border-bottom: 1px solid #f1f1f1;
+        transition: background .2s;
+    }
+
+    .nav-link-item:last-child {
+        border-bottom: none;
+    }
+
+    .nav-link-item:hover {
+        background: #f8f9fa;
+        color: #0f4c81;
+    }
+
+    .recent-activity-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        background: #fff;
+        padding: 24px;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        border-bottom: 1px solid #f1f1f1;
+        padding: 16px 0;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        font-size: 2rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+    }
+
+    .activity-content h6 {
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .activity-content p {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 2px;
+    }
+
+    .activity-content small {
+        color: #999;
+    }
+
 </style>
 @endsection
 
@@ -145,6 +247,11 @@ EduSearch - Dashboard Principal
                         <span>Biblioteca de PDFs</span>
                         <span class="badge bg-success">{{$pdfs->count()}}</span>
                     </a>
+                    <a href="{{route('room.index')}}" class="nav-link-item">
+                        <i class="bi bi-door-open"></i>
+                        <span>Salas</span>
+                        <span class="badge bg-success">{{$rooms->count()}}</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -176,7 +283,7 @@ EduSearch - Dashboard Principal
     </div>
 </div>
 
-    {{-- <!-- Atividades Recentes -->
+{{-- <!-- Atividades Recentes -->
     <div class="row">
         <div class="col-lg-8">
             <div class="recent-activity-card">
@@ -187,19 +294,19 @@ EduSearch - Dashboard Principal
                     @foreach($activities as $activity)
                     <div class="activity-item">
                         <div class="activity-icon {{ $activity['type'] ?? 'primary' }}">
-                            <i class="{{ $activity['icon'] ?? 'bi bi-info-circle' }}"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h6>{{ $activity['title'] }}</h6>
-                            <p>{{ $activity['description'] }}</p>
-                            <small class="text-muted">{{ $activity['time'] }}</small>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div> --}}
+<i class="{{ $activity['icon'] ?? 'bi bi-info-circle' }}"></i>
+</div>
+<div class="activity-content">
+    <h6>{{ $activity['title'] }}</h6>
+    <p>{{ $activity['description'] }}</p>
+    <small class="text-muted">{{ $activity['time'] }}</small>
+</div>
+</div>
+@endforeach
+</div>
+</div>
+</div>
+</div> --}}
 @endsection
 
 @section('modals')
