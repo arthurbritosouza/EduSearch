@@ -74,10 +74,10 @@ EduSearch - Notificações
 @endsection
 
 @if($notifications->where('partner_id',auth()->user()->id)->isEmpty())
-<div class="empty-state mt-5">
-    <i class="bi bi-bell-slash" style="font-size: 3rem;"></i>
-    <h4 class="mt-3">Nenhuma notificação nova</h4>
-    <p>Você não tem convites pendentes no momento.</p>
+<div class="text-center py-5">
+    <i class="bi bi-bell-slash text-muted" style="font-size: 3rem;"></i>
+    <h4 class="mt-3 text-muted">Nenhuma notificação nova</h4>
+    <p class="text-muted">Você não tem convites pendentes no momento.</p>
 </div>
 @endif
 
@@ -121,9 +121,9 @@ EduSearch - Notificações
                     <i class="bi bi-x-lg me-1"></i>Recusar
                 </button>
             </div>
-        @endif
-        @endforeach
-        {{-- <!-- Exemplo de notificação mais antiga -->
+            @endif
+            @endforeach
+            {{-- <!-- Exemplo de notificação mais antiga -->
         <div class="notification-card d-flex align-items-center opacity-75">
             <div class="notification-icon">
                 <i class="bi bi-people-fill"></i>
@@ -146,21 +146,21 @@ EduSearch - Notificações
 
 
 
+        </div>
     </div>
-</div>
-@endsection
+    @endsection
 
-@section('scripts')
-<script>
-    // Atualizar horário em tempo real
-    function updateTime() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('pt-BR');
-        const dateString = now.toLocaleDateString('pt-BR');
-        document.getElementById('currentTime').innerHTML = `${dateString} - ${timeString}`;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
+    @section('scripts')
+    <script>
+        // Atualizar horário em tempo real
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR');
+            const dateString = now.toLocaleDateString('pt-BR');
+            document.getElementById('currentTime').innerHTML = `${dateString} - ${timeString}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
 
-</script>
-@endsection
+    </script>
+    @endsection

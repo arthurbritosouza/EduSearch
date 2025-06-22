@@ -8,14 +8,23 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Pdf_folder;
 use League\CommonMark\CommonMarkConverter;
 use App\Api;
-
+use App\Models\Room_content;
 
 class PdfController extends Controller
 {
     public function index()
     {
-        $pdfs = Pdf_folder::all();
-        return view('pdfs.index_pdfs', compact('pdfs'));
+        $pdfs = Pdf_folder::where('user_id', auth()->user()->id)->get();
+
+        $pdfs_comunidade = Room_content::join('relation_rooms', 'relation_rooms.room_id', '=', 'room_contents.room_id')
+            ->join('pdf_folders', 'pdf_folders.id', '=', 'room_contents.content_id')
+            ->where('room_contents.content_type', 2)
+            ->where('relation_rooms.partner_id', '=', auth()->user()->id)
+            ->where('pdf_folders.user_id', '!=', auth()->user()->id)
+            ->select('pdf_folders.*')
+            ->get();
+        // dd($pdfs_comunidade);
+        return view('pdfs.index_pdfs', compact('pdfs', 'pdfs_comunidade'));
     }
 
     public function create()
@@ -27,7 +36,7 @@ class PdfController extends Controller
     {
         $pdfFile = $request->file('pdf_file');
         if (!$pdfFile) {
-        dd('Arquivo não enviado!');
+            dd('Arquivo não enviado!');
         }
         $userId = auth()->user()->id;
         $filename = $request->pdf_title . '.pdf';
@@ -38,7 +47,7 @@ class PdfController extends Controller
             dd('Falha ao salvar o arquivo');
         }
         $user_id = auth()->user()->id;
-        $request_api = Http::timeout(120)->get(Api::endpoint().'/new_pdf_folder/'.$user_id.'/'.$request->pdf_title);
+        $request_api = Http::timeout(120)->get(Api::endpoint() . '/new_pdf_folder/' . $user_id . '/' . $request->pdf_title);
         if ($request_api->failed()) {
             dd('Falha na requisição');
         }
@@ -60,6 +69,21 @@ class PdfController extends Controller
 
     public function show(Pdf_folder $pdf)
     {
+        $pdf = Pdf_folder::leftJoin('room_contents', function($join) {
+            $join->on('pdf_folders.id', '=', 'room_contents.content_id')
+                 ->where('room_contents.content_type', 2);
+        })
+        ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
+        // ->where('user_id', auth()->user()->id)
+        ->select('pdf_folders.*')
+        ->first();
+        // dd($pdf);
+
+        if(!$pdf){
+            return redirect()->back()->withErrors('Você não tem permissão para acessar este PDF.');
+        }
+
+
         $converter = new CommonMarkConverter();
         $content = $converter->convertToHtml($pdf->content);
         return view('pdfs.pdf_view', compact('pdf', 'content'));
@@ -86,4 +110,3 @@ class PdfController extends Controller
         return redirect()->route('pdf.index')->with('success', 'PDF removido com sucesso!');
     }
 }
-

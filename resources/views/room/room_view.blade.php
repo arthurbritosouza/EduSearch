@@ -7,6 +7,7 @@ EduSearch - Sala de Estudos
 @section('style')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/topicos.css') }}">
+<link rel="stylesheet" href="{{ asset('css/room.css') }}">
 @endsection
 
 @section('content')
@@ -25,9 +26,14 @@ EduSearch - Sala de Estudos
         <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#editModal">
             <i class="bi bi-pencil"></i> Editar
         </button>
-        <button class="btn btn-outline-light">
+        <button class="btn btn-outline-light me-2">
             <i class="bi bi-share"></i> Compartilhar
         </button>
+        @if($roleAuthUser == 1)
+        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteRoomModal">
+            <i class="bi bi-trash"></i> Excluir Sala
+        </button>
+        @endif
     </div>
 </div>
 @endsection
@@ -114,12 +120,12 @@ EduSearch - Sala de Estudos
                                 </div>
                                 <div class="stat-item">
                                     <i class="bi bi-bookmarks-fill"></i>
-                                    <span class="stat-number">3</span>
+                                    <span class="stat-number">{{ $topics->count() }}</span>
                                     <span class="stat-label">Tópicos</span>
                                 </div>
                                 <div class="stat-item">
                                     <i class="bi bi-file-earmark-pdf"></i>
-                                    <span class="stat-number">2</span>
+                                    <span class="stat-number">{{ $related_pdfs->count() }}</span>
                                     <span class="stat-label">Arquivos</span>
                                 </div>
                                 <div class="stat-item">
@@ -276,233 +282,57 @@ EduSearch - Sala de Estudos
         </div>
     </div>
 </div>
+@endsection
 
-<!-- Modal: Adicionar Novo Membro -->
-<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addMemberModalLabel"><i class="bi bi-person-plus-fill me-2"></i>Convidar para a Sala</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{{route('create_notification')}}" method="POST">
-                    @csrf
-                    <input type="hidden" name="room_id" value="{{$room->id}}">
-                    <input type="hidden" name="type" value=2>
-                    <div class="mb-3">
-                        <label for="memberEmail" class="form-label">E-mail do Convidado</label>
-                        <input type="email" class="form-control" name="email" placeholder="exemplo@email.com" required>
-                    </div>
-                    <div class="alert alert-info d-flex align-items-center mt-3" role="alert">
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        <div>
-                            O usuário receberá um convite por e-mail para se juntar à sala.
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="addMemberForm" class="btn btn-primary"><i class="bi bi-send me-1"></i>Enviar Convite</button>
-            </div>
-        </div>
-    </div>
-</div>
+@section('modals')
+@include('modals.modal-room')
+@endsection
 
-<!-- Modal: Editar Sala -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Sala</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('room.update', $room->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="mb-3">
-                        <label for="roomName" class="form-label">Nome da Sala</label>
-                        <input type="text" class="form-control" id="roomName" name="name" value="{{ $room->name }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="roomDescription" class="form-label">Descrição</label>
-                        <textarea class="form-control" id="roomDescription" name="description" rows="3" required>{{ $room->description }}</textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal: Adicionar Tópico -->
-<div class="modal fade" id="addTopicModal" tabindex="-1" aria-labelledby="addTopicModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addTopicModalLabel"><i class="bi bi-bookmarks-fill me-2"></i>Adicionar Tópico à Sala</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Navegação por Abas no Modal -->
-                <ul class="nav nav-tabs" id="topicTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="my-topics-tab" data-bs-toggle="tab" data-bs-target="#my-topics" type="button" role="tab">
-                            Meus Tópicos
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="create-topic-tab" data-bs-toggle="tab" data-bs-target="#create-topic" type="button" role="tab">
-                            Criar Novo Tópico
-                        </button>
-                    </li>
-                </ul>
-                <!-- Conteúdo das Abas -->
-                <div class="tab-content mt-3" id="topicTabsContent">
-                    <!-- Aba Meus Tópicos -->
-                    <div class="tab-pane fade show active" id="my-topics" role="tabpanel">
-                        <div class="list-group">
-                            @foreach($topics as $topic)
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{$topic->name}}</strong>
-                                    <small class="text-muted d-block">Criado em {{ \Carbon\Carbon::parse($topic->created_at)->format('d/m/Y') }}</small>
-                                </div>
-                                <a href="{{route('room.addTopic', [$room->id,$topic->id])}}" class="btn btn-sm btn-primary">Adicionar</a>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <!-- Aba Criar Novo Tópico -->
-                    <div class="tab-pane fade" id="create-topic" role="tabpanel">
-                        <form action="{{ route('room.createTopicRoom') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="room_id" value="{{ $room->id }}">
-                            <div class="mb-3">
-                                <label for="topicName" class="form-label">Nome do Tópico</label>
-                                <input type="text" class="form-control" id="topicName" name="topic" placeholder="Digite o nome do tópico">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Criar e Adicionar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
+@section('scripts')
+<script>
+    // Manipular modal de mudança de cargo
+    $('#changeRoleModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var userId = button.data('user-id');
+        var userName = button.data('user-name');
+        var currentRole = button.data('current-role');
 
-<!-- Modal: Adicionar PDF -->
-<div class="modal fade" id="addPdfModal" tabindex="-1" aria-labelledby="addPdfModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addPdfModalLabel"><i class="bi bi-file-earmark-pdf me-2"></i>Adicionar PDF à Sala</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Navegação por Abas no Modal -->
-                <ul class="nav nav-tabs" id="pdfTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="my-pdfs-tab" data-bs-toggle="tab" data-bs-target="#my-pdfs" type="button" role="tab">
-                            Meus PDFs
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="upload-pdf-tab" data-bs-toggle="tab" data-bs-target="#upload-pdf" type="button" role="tab">
-                            Enviar Novo PDF
-                        </button>
-                    </li>
-                </ul>
-                <!-- Conteúdo das Abas -->
-                <div class="tab-content mt-3" id="pdfTabsContent">
-                    <!-- Aba Meus PDFs -->
-                    <div class="tab-pane fade show active" id="my-pdfs" role="tabpanel">
-                        <div class="list-group">
-                            @foreach($pdfs as $pdf)
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{$pdf->name}}.pdf</strong>
-                                    <small class="text-muted d-block">Enviado em {{ \Carbon\Carbon::parse($pdf->created_at)->format('d/m/Y') }}</small>
-                                </div>
-                                <a href="{{route('room.addPdf',[$room->id,$pdf->id])}}" class="btn btn-sm btn-primary">Adicionar</a>
-                            </div>
-                            @endforeach
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>Exercicios_Geometria.pdf</strong>
-                                    <small class="text-muted d-block">Enviado em 03/06/2025</small>
-                                </div>
-                                <button class="btn btn-sm btn-primary">Adicionar</button>
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>Probabilidade_Apostila.pdf</strong>
-                                    <small class="text-muted d-block">Enviado em 01/06/2025</small>
-                                </div>
-                                <button class="btn btn-sm btn-primary">Adicionar</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Aba Enviar Novo PDF -->
-                    <div class="tab-pane fade" id="upload-pdf" role="tabpanel">
-                        <form action="{{ route('room.createPdfRoom') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" name="room_id" value="{{ $room->id }}">
-                            <div class="mb-3">
-                                <label class="form-label">Selecionar Arquivo PDF</label>
-                                <input type="file" class="form-control" id="pdfFile" name="pdf_file" accept=".pdf">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Titulo pdf</label>
-                                <textarea class="form-control" id="pdfDescription" name="pdf_title" placeholder="Digite o nome do pdf"></textarea>
-                            </div>
-                            <button type="submmit" class="btn btn-primary">Enviar e Adicionar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
+        var modal = $(this);
+        modal.find('#changeRoleUserId').val(userId);
+        modal.find('#changeRoleUserName').val(userName);
+        modal.find('#newRole').val(currentRole);
+    });
 
-<!-- Modal: Listar Membros -->
-<div class="modal fade" id="listMembersModal" tabindex="-1" aria-labelledby="listMembersModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="listMembersModalLabel"><i class="bi bi-people me-2"></i>Membros da Sala</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="list-group">
-                    @foreach($participants as $participant)
-                    <div class="list-group-item d-flex align-items-center">
-                        <div class="me-3">
-                            <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
-                        </div>
-                        <div>
-                            <strong>{{ $participant->name }}</strong>
-                            <small class="text-muted d-block">{{ $participant->email }}</small>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
+    // Manipular modal de remoção de membro
+    $('#removeMemberModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var userId = button.data('user-id');
+        var userName = button.data('user-name');
+
+        var modal = $(this);
+        modal.find('#removeMemberUserId').val(userId);
+        modal.find('#removeMemberUserName').text(userName);
+    });
+
+    // Atualizar formulários para usar IDs corretos
+    $(document).ready(function() {
+        // Corrigir IDs dos formulários
+        $('#changeRoleModal form').attr('id', 'changeRoleForm');
+        $('#removeMemberModal form').attr('id', 'removeMemberForm');
+
+        // Controle do modal de exclusão da sala
+        $('#confirmDelete').on('input', function() {
+            var confirmText = $(this).val();
+            var deleteBtn = $('#deleteRoomBtn');
+
+            if (confirmText === 'EXCLUIR') {
+                deleteBtn.prop('disabled', false);
+            } else {
+                deleteBtn.prop('disabled', true);
+            }
+        });
+    });
+
+</script>
 @endsection

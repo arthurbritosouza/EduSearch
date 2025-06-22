@@ -265,22 +265,22 @@
         text-align: center;
         gap: 0.75rem;
     }
-    
+
     .pdf-actions {
         justify-content: center;
     }
-    
+
     .title-input-group {
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
     }
-    
+
     .file-name-display {
         min-width: auto;
         text-align: center;
     }
-    
+
     .modal-dialog {
         margin: 0.5rem;
     }
@@ -319,4 +319,52 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* ===== ESTADO VAZIO ===== */
+.empty-state {
+    padding: 2rem;
+}
+
+.empty-state i {
+    display: block;
+    margin: 0 auto;
+    font-size: 4rem;
+    color: #6c757d;
+    text-decoration: line-through;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+/* Ícone específico para comunidade (sem riscar) */
+.empty-state i.bi-people {
+    text-decoration: none;
+    opacity: 0.3;
+}
+
+.empty-state h5 {
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.empty-state .btn {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.empty-state .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }

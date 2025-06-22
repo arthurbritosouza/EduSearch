@@ -9,101 +9,102 @@ EduSearch - {{ $data_topic->name}}
 <link rel="stylesheet" href="{{ asset('css/topicos.css') }}">
 
 <style>
-.rooms-container {
-    padding: 1rem;
-}
+    .rooms-container {
+        padding: 1rem;
+    }
 
-.rooms-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
+    .rooms-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
 
-.rooms-header .header-info h3 {
-    margin: 0;
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: #222;
-}
+    .rooms-header .header-info h3 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #222;
+    }
 
-.rooms-header .header-info p {
-    margin: 0.25rem 0 0;
-    color: #555;
-    font-size: 0.95rem;
-}
+    .rooms-header .header-info p {
+        margin: 0.25rem 0 0;
+        color: #555;
+        font-size: 0.95rem;
+    }
 
-.rooms-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-}
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
 
-/* Card das salas */
-.room-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-    cursor: pointer;
-}
+    /* Card das salas */
+    .room-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
 
-.room-card:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    transform: translateY(-4px);
-}
+    .room-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+    }
 
-.room-icon {
-    font-size: 2.25rem;
-    color: #0d6efd; /* Azul Bootstrap primário */
-    margin-bottom: 0.75rem;
-    align-self: flex-start;
-}
+    .room-icon {
+        font-size: 2.25rem;
+        color: #0d6efd;
+        /* Azul Bootstrap primário */
+        margin-bottom: 0.75rem;
+        align-self: flex-start;
+    }
 
-.room-info {
-    flex-grow: 1;
-}
+    .room-info {
+        flex-grow: 1;
+    }
 
-.room-name {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #222;
-    margin-bottom: 0.5rem;
-}
+    .room-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.5rem;
+    }
 
-.room-description {
-    font-size: 0.95rem;
-    color: #555;
-    margin-bottom: 1rem;
-    line-height: 1.3;
-}
+    .room-description {
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
 
-.room-meta {
-    font-size: 0.9rem;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
+    .room-meta {
+        font-size: 0.9rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
 
-.room-meta i {
-    font-size: 1.1rem;
-    color: #0d6efd;
-}
+    .room-meta i {
+        font-size: 1.1rem;
+        color: #0d6efd;
+    }
 
-.room-actions {
-    margin-top: auto;
-    text-align: right;
-}
+    .room-actions {
+        margin-top: auto;
+        text-align: right;
+    }
 
-.room-actions .btn {
-    font-size: 0.85rem;
-    padding: 0.35rem 0.75rem;
-}
+    .room-actions .btn {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.75rem;
+    }
 
 </style>
 @endsection
@@ -434,6 +435,15 @@ EduSearch - {{ $data_topic->name}}
                 </div>
                 @endforeach
             </div>
+            @else
+            <div class="text-center py-5">
+                <i class="bi bi-puzzle text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 text-muted">Nenhum exercício encontrado</h4>
+                <p class="text-muted">Você ainda não tem exercícios para este tópico.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exercicioModal">
+                    <i class="bi bi-plus-circle me-2"></i>Gerar Exercícios
+                </button>
+            </div>
             @endif
 
         </div>
@@ -441,6 +451,7 @@ EduSearch - {{ $data_topic->name}}
 
     <!-- Aba Anotações -->
     <div class="tab-pane fade" id="anotacao" role="tabpanel">
+        @if($anotacoes->count() > 0)
         <div class="notes-container">
             <div class="notes-header">
                 <div class="header-info">
@@ -451,7 +462,6 @@ EduSearch - {{ $data_topic->name}}
                     <i class="bi bi-plus-circle me-2"></i>Nova Anotação
                 </button>
             </div>
-
 
             <div class="notes-grid">
                 @foreach ($anotacoes as $anotacao)
@@ -485,10 +495,21 @@ EduSearch - {{ $data_topic->name}}
                 @endforeach
             </div>
         </div>
+        @else
+        <div class="text-center py-5">
+            <i class="bi bi-journal-text text-muted" style="font-size: 3rem;"></i>
+            <h4 class="mt-3 text-muted">Nenhuma anotação encontrada</h4>
+            <p class="text-muted">Você ainda não tem anotações para este tópico.</p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNoteModal">
+                <i class="bi bi-plus-circle me-2"></i>Nova Anotação
+            </button>
+        </div>
+        @endif
     </div>
 
     <!-- Aba Parceiros -->
     <div class="tab-pane fade" id="partners" role="tabpanel">
+        @if($parceiros->count() > 0)
         <div class="partners-container">
             <div class="partners-header">
                 <div class="header-info">
@@ -499,7 +520,6 @@ EduSearch - {{ $data_topic->name}}
                     <i class="bi bi-person-plus me-2"></i>Adicionar Parceiro
                 </button>
             </div>
-
 
             <div class="partners-grid">
                 @foreach ($parceiros as $parceiro)
@@ -522,6 +542,16 @@ EduSearch - {{ $data_topic->name}}
                 @endforeach
             </div>
         </div>
+        @else
+        <div class="text-center py-5">
+            <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+            <h4 class="mt-3 text-muted">Nenhum parceiro encontrado</h4>
+            <p class="text-muted">Você ainda não tem parceiros de estudo para este tópico.</p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addParceiroModall">
+                <i class="bi bi-person-plus me-2"></i>Adicionar Parceiro
+            </button>
+        </div>
+        @endif
     </div>
 
     <div class="tab-pane fade" id="rooms" role="tabpanel">
