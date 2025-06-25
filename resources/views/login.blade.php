@@ -366,18 +366,22 @@
                 transform: translateY(0) rotate(0deg) scale(1);
                 opacity: 0.3;
             }
+
             25% {
                 transform: translateY(-15px) rotate(5deg) scale(1.05);
                 opacity: 0.5;
             }
+
             50% {
                 transform: translateY(-25px) rotate(10deg) scale(1.1);
                 opacity: 0.7;
             }
+
             75% {
                 transform: translateY(-15px) rotate(5deg) scale(1.05);
                 opacity: 0.5;
             }
+
             100% {
                 transform: translateY(0) rotate(0deg) scale(1);
                 opacity: 0.3;
@@ -407,12 +411,15 @@
                 transform: translateY(0) translateX(0);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.5;
             }
+
             90% {
                 opacity: 0.5;
             }
+
             100% {
                 transform: translateY(-300px) translateX(100px);
                 opacity: 0;
@@ -452,6 +459,7 @@
                 padding: 20px;
             }
         }
+
     </style>
 </head>
 <body>
@@ -501,7 +509,7 @@
                         </div>
                     </form>
                     <!-- Formulário de Cadastro -->
-                    <form action="/register_user_form" method="POST" id="signup-form" class="signup-form">
+                    <form action="{{ route('login.store') }}" method="POST" id="signup-form" class="signup-form">
                         @csrf
                         <div class="logo">
                             <i class="bx bx-book-reader"></i>
@@ -549,7 +557,7 @@
                         <div class="float-element calculator"><i class="bx bx-calculator"></i></div>
                         <div class="float-element bulb"><i class="bx bx-bulb"></i></div>
                         <div class="float-element brain"><i class="bx bx-brain"></i></div>
-                        
+
                         <!-- Novos elementos adicionados -->
                         <div class="float-element notebook"><i class="bx bx-notepad"></i></div>
                         <div class="float-element globe"><i class="bx bx-globe"></i></div>
@@ -557,7 +565,7 @@
                         <div class="float-element atom"><i class="bx bx-atom"></i></div>
                         <div class="float-element ruler"><i class="bx bx-ruler"></i></div>
                     </div>
-                    
+
                     <!-- Efeito de partículas -->
                     <div class="particles" id="particles"></div>
                 </div>
@@ -680,6 +688,7 @@
                 particlesContainer.appendChild(particle);
             }
         });
+
     </script>
 </body>
 </html>
