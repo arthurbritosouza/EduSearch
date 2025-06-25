@@ -9,6 +9,7 @@ use App\Models\Pdf_folder;
 use League\CommonMark\CommonMarkConverter;
 use App\Api;
 use App\Models\Room_content;
+use App\NotifyDiscord;
 
 class PdfController extends Controller
 {
@@ -53,7 +54,7 @@ class PdfController extends Controller
         }
 
         $data_api = $request_api->json();
-        Pdf_folder::create([
+        $pdf = Pdf_folder::create([
             'user_id' => auth()->user()->id,
             'name' => $request->pdf_title,
             'summary' => $data_api['summary'],
@@ -63,23 +64,25 @@ class PdfController extends Controller
             'words' => $data_api['words'],
             'language' => $data_api['language'],
         ]);
+        $pdf_id = $pdf->id;
+        NotifyDiscord::notify('pdf', $request->pdf_title, $pdf_id);
 
         return redirect()->back()->withSuccess('PDF enviado com sucesso.');
     }
 
     public function show(Pdf_folder $pdf)
     {
-        $pdf = Pdf_folder::leftJoin('room_contents', function($join) {
+        $pdf = Pdf_folder::leftJoin('room_contents', function ($join) {
             $join->on('pdf_folders.id', '=', 'room_contents.content_id')
-                 ->where('room_contents.content_type', 2);
+                ->where('room_contents.content_type', 2);
         })
-        ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
-        // ->where('user_id', auth()->user()->id)
-        ->select('pdf_folders.*')
-        ->first();
+            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+            // ->where('user_id', auth()->user()->id)
+            ->select('pdf_folders.*')
+            ->first();
         // dd($pdf);
 
-        if(!$pdf){
+        if (!$pdf) {
             return redirect()->back()->withErrors('Você não tem permissão para acessar este PDF.');
         }
 

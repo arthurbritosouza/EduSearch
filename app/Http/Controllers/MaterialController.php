@@ -14,6 +14,7 @@ use App\Models\Exercise;
 use App\Models\Relation;
 use App\Models\User;
 use App\Api;
+use App\NotifyDiscord;
 
 class MaterialController extends Controller
 {
@@ -56,11 +57,13 @@ class MaterialController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $content = Http::timeout(120)->get(Api::endpoint().'/add_material/'.urlencode($data['name_topic']).'/'.urlencode($data['descricao']).'/'.urlencode($data['level']));
-        if ($content->successful()){
-            $this->addMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
+        $content = Http::timeout(120)->get(Api::endpoint() . '/add_material/' . urlencode($data['name_topic']) . '/' . urlencode($data['descricao']) . '/' . urlencode($data['level']));
+        if ($content->successful()) {
+            $material = $this->addMaterial($data['id_topic'], $content[0], $data['level'], $data['title']);
+            $material_id = $material->id;
+            NotifyDiscord::notify('material', $data['title'], $material_id);
             return redirect()->back()->withSuccess('Material adicionado com sucesso.');
-        } else{
+        } else {
             return redirect()->back()->withErrors('Erro ao cadastrar Material.');
         }
     }
@@ -70,9 +73,9 @@ class MaterialController extends Controller
      */
     public function show(Material $material)
     {
-        $data_material = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
+        $data_material = Material::leftJoin('relations', 'materials.topic_id', '=', 'relations.topic_id')
             ->where('materials.id', $material->id)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('materials.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id);
@@ -83,7 +86,7 @@ class MaterialController extends Controller
 
         $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
             ->where('topic_folders.id', $material->topic_id)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('topic_folders.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id);
@@ -92,9 +95,9 @@ class MaterialController extends Controller
             ->distinct()
             ->first();
 
-        $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
+        $exercises = Exercise::leftJoin('relations', 'exercises.topic_id', '=', 'relations.topic_id')
             ->where('exercises.topic_id', $material->topic_id)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('exercises.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id);
