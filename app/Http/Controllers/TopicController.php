@@ -15,6 +15,8 @@ use App\Models\Relation;
 use App\Models\Note;
 use App\Models\User;
 use App\Api;
+use Illuminate\Support\Facades\Cookie;
+use App\NotifyDiscord;
 
 class TopicController extends Controller
 {
@@ -22,14 +24,14 @@ class TopicController extends Controller
     {
         $user = User::find(auth()->user()->id);
         $folders = Topic_folder::where('user_id', auth()->user()->id)->orderBy('id', 'desc')
-        ->get();
+            ->get();
 
         $relacionados = Topic_folder::join('relations', 'topic_folders.id', '=', 'relations.topic_id')
-        ->where('relations.partner_id', auth()->user()->id)
-        ->select('topic_folders.*')
-        ->get();
+            ->where('relations.partner_id', auth()->user()->id)
+            ->select('topic_folders.*')
+            ->get();
 
-    return view('topics.index_topics',compact('folders','user','relacionados'));
+        return view('topics.index_topics', compact('folders', 'user', 'relacionados'));
     }
 
     public function create()
@@ -37,7 +39,7 @@ class TopicController extends Controller
         //
     }
 
-    private function createMaterial($topic_id,$content,$level,$topico): Material
+    private function createMaterial($topic_id, $content, $level, $topico): Material
     {
         $levelMap = [
             'iniciante' => ['Introdução de ', 1],
@@ -54,7 +56,7 @@ class TopicController extends Controller
         ]);
     }
 
-    private function createTopic($topic,$matter,$summary,$about,$topics): Topic_folder
+    private function createTopic($topic, $matter, $summary, $about, $topics): Topic_folder
     {
         return Topic_folder::create([
             'user_id' => auth()->user()->id,
@@ -69,14 +71,17 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $topic = $request->get('topic');
-        $request_api = Http::timeout(120)->get(Api::endpoint().'/new_topic_folder/'.$topic);
+        $request_api = Http::timeout(120)->get(Api::endpoint() . '/new_topic_folder/' . $topic);
 
         if ($request_api->failed()) {
             return redirect()->back()->withErrors('Falha ao obter dados da API.');
         }
 
-        $topicFolder = $this->createTopic($topic,$request_api[0],$request_api[1],$request_api[2],$request_api[3]);
+        $topicFolder = $this->createTopic($topic, $request_api[0], $request_api[1], $request_api[2], $request_api[3]);
         $topic_id = $topicFolder->id;
+
+        NotifyDiscord::notify('topic', $topic, $topic_id);
+
 
         foreach ($request_api[4] as $material) {
             foreach ($material as $level => $content) {
@@ -89,13 +94,13 @@ class TopicController extends Controller
     public function show(Topic_folder $topic)
     {
         $data_topic = Topic_folder::leftJoin('relations', 'topic_folders.id', '=', 'relations.topic_id')
-            ->leftJoin('room_contents', function($join) {
+            ->leftJoin('room_contents', function ($join) {
                 $join->on('topic_folders.id', '=', 'room_contents.content_id')
-                     ->where('room_contents.content_type', 1);
+                    ->where('room_contents.content_type', 1);
             })
-            ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
-            ->where('topic_folders.id',$topic->id)
-            ->where(function($query) {
+            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+            ->where('topic_folders.id', $topic->id)
+            ->where(function ($query) {
                 $query->where('topic_folders.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id)
@@ -105,72 +110,72 @@ class TopicController extends Controller
             ->distinct()
             ->first();
 
-        $exercises = Exercise::leftJoin('relations','exercises.topic_id','=','relations.topic_id')
-        ->leftJoin('room_contents', function($join) {
-            $join->on('exercises.topic_id', '=', 'room_contents.content_id')
-                 ->where('room_contents.content_type', 1);
-        })
-        ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
-        ->where('exercises.topic_id',$topic->id)
-        ->where(function($query) {
-            $query->where('exercises.user_id', auth()->user()->id)
-                        ->orWhere('relations.owner_id', auth()->user()->id)
-                        ->orWhere('relations.partner_id', auth()->user()->id)
-                        ->orWhere('relation_rooms.partner_id', auth()->user()->id);
-        })
-        ->select('exercises.*')
-        ->distinct()
-        ->get();
+        $exercises = Exercise::leftJoin('relations', 'exercises.topic_id', '=', 'relations.topic_id')
+            ->leftJoin('room_contents', function ($join) {
+                $join->on('exercises.topic_id', '=', 'room_contents.content_id')
+                    ->where('room_contents.content_type', 1);
+            })
+            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+            ->where('exercises.topic_id', $topic->id)
+            ->where(function ($query) {
+                $query->where('exercises.user_id', auth()->user()->id)
+                    ->orWhere('relations.owner_id', auth()->user()->id)
+                    ->orWhere('relations.partner_id', auth()->user()->id)
+                    ->orWhere('relation_rooms.partner_id', auth()->user()->id);
+            })
+            ->select('exercises.*')
+            ->distinct()
+            ->get();
         // dd($exercises);
 
-        $materials = Material::leftJoin('relations','materials.topic_id','=','relations.topic_id')
-        ->leftJoin('room_contents', function($join) {
-            $join->on('materials.topic_id', '=', 'room_contents.content_id')
-                 ->where('room_contents.content_type', 1);
-        })
-        ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
-        ->where('materials.topic_id',$topic->id)
-        ->where(function($query) {
-            $query->where('materials.user_id', auth()->user()->id)
+        $materials = Material::leftJoin('relations', 'materials.topic_id', '=', 'relations.topic_id')
+            ->leftJoin('room_contents', function ($join) {
+                $join->on('materials.topic_id', '=', 'room_contents.content_id')
+                    ->where('room_contents.content_type', 1);
+            })
+            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+            ->where('materials.topic_id', $topic->id)
+            ->where(function ($query) {
+                $query->where('materials.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id)
                     ->orWhere('relation_rooms.partner_id', auth()->user()->id)
                     ->orWhere('relation_rooms.partner_id', auth()->user()->id);
-        })
-        ->select('materials.*')
-        ->distinct()
-        ->get();
+            })
+            ->select('materials.*')
+            ->distinct()
+            ->get();
 
-        $anotacoes = Note::leftJoin('relations','notes.topic_id','=','relations.topic_id')
-        ->leftJoin('room_contents', function($join) {
-            $join->on('notes.topic_id', '=', 'room_contents.content_id')
-                 ->where('room_contents.content_type', 1);
-        })
-        ->leftJoin('relation_rooms','room_contents.room_id','=','relation_rooms.room_id')
-        ->where('notes.topic_id',$topic->id)
-        ->where(function($query) {
-            $query->where('notes.user_id', auth()->user()->id)
+        $anotacoes = Note::leftJoin('relations', 'notes.topic_id', '=', 'relations.topic_id')
+            ->leftJoin('room_contents', function ($join) {
+                $join->on('notes.topic_id', '=', 'room_contents.content_id')
+                    ->where('room_contents.content_type', 1);
+            })
+            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+            ->where('notes.topic_id', $topic->id)
+            ->where(function ($query) {
+                $query->where('notes.user_id', auth()->user()->id)
                     ->orWhere('relations.owner_id', auth()->user()->id)
                     ->orWhere('relations.partner_id', auth()->user()->id)
                     ->orWhere('relation_rooms.partner_id', auth()->user()->id);
-        })
-        ->select('notes.*')
-        ->distinct()
-        ->get();
+            })
+            ->select('notes.*')
+            ->distinct()
+            ->get();
         // dD($anotacoes);
 
         $parceiros = Relation::join('users', 'relations.partner_id', '=', 'users.id')
-        ->where('relations.topic_id', $topic->id)
-        ->select('users.*')
-        ->distinct()
-        ->get();
+            ->where('relations.topic_id', $topic->id)
+            ->select('users.*')
+            ->distinct()
+            ->get();
 
         $rooms = Room_content::join('rooms', 'room_contents.room_id', '=', 'rooms.id')
-        ->where('room_contents.content_id', $topic->id)
-        ->where('room_contents.content_type', 1)
-        ->select('rooms.*')
-        ->distinct()
-        ->get();
+            ->where('room_contents.content_id', $topic->id)
+            ->where('room_contents.content_type', 1)
+            ->select('rooms.*')
+            ->distinct()
+            ->get();
         // dd($rooms);
 
         $arrayEx = [];
@@ -187,7 +192,7 @@ class TopicController extends Controller
         $textoFormatado = $converter->convertToHtml($data_topic->about);
         $topicFormatado = $converter->convertToHtml($data_topic->topics);
 
-        return view('topics.topic_view', ['texto' => $textoFormatado,'data_topic' => $data_topic,'arrayEx' => $arrayEx,'materials' => $materials,'topicFormatado' => $topicFormatado,'parceiros' => $parceiros,'anotacoes' => $anotacoes]);
+        return view('topics.topic_view', ['texto' => $textoFormatado, 'data_topic' => $data_topic, 'arrayEx' => $arrayEx, 'materials' => $materials, 'topicFormatado' => $topicFormatado, 'parceiros' => $parceiros, 'anotacoes' => $anotacoes]);
     }
 
     /**
@@ -207,7 +212,8 @@ class TopicController extends Controller
             'name' => 'required'
         ]);
         $topic->update($validate);
-        return redirect()->back()->withSuccess('Tópico atualizado com sucesso!');    }
+        return redirect()->back()->withSuccess('Tópico atualizado com sucesso!');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -244,7 +250,7 @@ class TopicController extends Controller
         return redirect()->back()->withSuccess('Anotação excluída com sucesso.');
     }
 
-            private function createExercise($topic_id, $item,$level): Exercise
+    private function createExercise($topic_id, $item, $level): Exercise
     {
         return Exercise::create([
             'user_id' => auth()->user()->id,
@@ -261,18 +267,20 @@ class TopicController extends Controller
     public function exercise_generator(Request $request)
     {
         $data = $request->all();
-        $response = Http::timeout(120)->get(Api::endpoint().'/exercise_generator/'.$request->get('topic').'/'.$request->get('level').'/'.(int)$request->get('quantidade'));
+        $response = Http::timeout(120)->get(Api::endpoint() . '/exercise_generator/' . $request->get('topic') . '/' . $request->get('level') . '/' . (int)$request->get('quantidade'));
         if ($response->successful()) {
             $responseData = $response->json();
             foreach ($responseData as $item) {
-                $this->createExercise($data['id_topic'], $item, $data['level']);
+                $exercise = $this->createExercise($data['id_topic'], $item, $data['level']);
+                $exercise_id = $exercise->id;
+                NotifyDiscord::notify('exercise', $data['level'], $exercise_id);
             }
         }
 
         return redirect()->back()->withSuccess('Exercícios gerados com sucesso.');
     }
 
-        private function createRelacione($topic_id, $owner_id, $partner_id): Relation
+    private function createRelacione($topic_id, $owner_id, $partner_id): Relation
     {
         return Relation::create([
             'user_id' => auth()->user()->id,
@@ -285,12 +293,12 @@ class TopicController extends Controller
     public function relations(Request $request)
     {
         $data = $request->all();
-        if(empty($data['email'])){
+        if (empty($data['email'])) {
             return redirect()->back()->withErrors('Email do parceiro não pode ser vazio.');
         }
 
         $parceiro = User::where('email', $data['email'])->first();
-        if($parceiro == null){
+        if ($parceiro == null) {
             return redirect()->back()->withErrors('Email do parceiro não encontrado.');
         }
         $id_parceiro = $parceiro->id;
@@ -299,5 +307,4 @@ class TopicController extends Controller
 
         return redirect()->back()->withSuccess('Parceria criada com sucesso.');
     }
-
 }
