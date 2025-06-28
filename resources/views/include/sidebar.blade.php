@@ -35,6 +35,12 @@
                                 <span class="nav-text">Biblioteca de PDFs</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link drawer-item" href="{{route('notes')}}">
+                                <i class="bi bi-journal-richtext"></i>
+                                <span class="nav-text">Anotações</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
@@ -119,6 +125,12 @@
                 <a class="nav-link" href="/logout" id="logoutButton">
                     <i class="bi bi-box-arrow-right"></i>
                     <span class="nav-text">Logout</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('notebook-lm.index') }}">
+                    <i class="bi bi-journal-richtext"></i>
+                    <span class="nav-text">NotebookLM</span>
                 </a>
             </li>
         </ul>

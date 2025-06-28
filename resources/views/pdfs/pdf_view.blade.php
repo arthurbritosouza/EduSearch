@@ -442,86 +442,44 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
                     <h3>Salas de Estudo</h3>
                     <p>Explore salas de discussão e grupos de estudo relacionados a {{ $pdf->name }}</p>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-                    <i class="bi bi-plus-circle me-2"></i>Criar Nova Sala
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPdfToRoomModal">
+                    <i class="bi bi-plus-circle me-2"></i>Adicionar a Sala
                 </button>
             </div>
 
+            @if($rooms->count() > 0)
             <div class="rooms-grid">
-                {{-- Dados Estáticos para Visualização --}}
+                @foreach($rooms as $room)
                 <div class="room-card">
                     <div class="room-icon">
                         <i class="bi bi-chat-dots-fill"></i>
                     </div>
                     <div class="room-info">
-                        <h5 class="room-name">Sala de Estudo: Tópico X</h5>
-                        <p class="room-description">Discussão aprofundada sobre conceitos fundamentais de {{ $pdf->name }}. Ideal para iniciantes.</p>
+                        <h5 class="room-name">{{ $room->name }}</h5>
+                        <p class="room-description">{{ $room->description }}</p>
                         <span class="room-meta">
-                            <i class="bi bi-people"></i> 15 Membros
+                            <i class="bi bi-people"></i>
+                            {{ \App\Models\Relation_room::where('room_id', $room->id)->count() }} Membros
                         </span>
                     </div>
                     <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
+                        <a href="{{ route('room.show', $room->id) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
                         </a>
                     </div>
                 </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Preparação para Provas</h5>
-                        <p class="room-description">Grupo focado em resolver exercícios e revisar para as próximas avaliações. Nível intermediário.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 23 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Desafios Avançados</h5>
-                        <p class="room-description">Espaço para discussão de problemas complexos e tópicos avançados em {{ $pdf->name }}.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 8 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Recursos e Dicas</h5>
-                        <p class="room-description">Compartilhamento de materiais adicionais, artigos e dicas de estudo para o tópico.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 30 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-                {{-- Fim dos Dados Estáticos --}}
+                @endforeach
             </div>
+            @else
+            <div class="text-center py-5">
+                <i class="bi bi-house-door text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 text-muted">Nenhuma sala encontrada</h4>
+                <p class="text-muted">Este PDF ainda não foi adicionado a nenhuma sala de estudo.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPdfToRoomModal">
+                    <i class="bi bi-plus-circle me-2"></i>Adicionar a Sala
+                </button>
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -555,6 +513,102 @@ EduSearch - {{ $pdf_data->title ?? 'Visualizador de PDF' }}
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" onclick="saveNote()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar PDF a Sala -->
+<div class="modal fade" id="addPdfToRoomModal" tabindex="-1" aria-labelledby="addPdfToRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPdfToRoomModalLabel">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>Adicionar {{ $pdf->name }} a Sala
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Navegação por Abas no Modal -->
+                <ul class="nav nav-tabs" id="roomTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="my-rooms-tab" data-bs-toggle="tab" data-bs-target="#my-rooms" type="button" role="tab">
+                            Minhas Salas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="create-room-tab" data-bs-toggle="tab" data-bs-target="#create-room" type="button" role="tab">
+                            Criar Nova Sala
+                        </button>
+                    </li>
+                </ul>
+                <!-- Conteúdo das Abas -->
+                <div class="tab-content mt-3" id="roomTabsContent">
+                    <!-- Aba Minhas Salas -->
+                    <div class="tab-pane fade show active" id="my-rooms" role="tabpanel">
+                        <div class="list-group">
+                            @if($userRooms->count() > 0)
+                            @foreach($userRooms as $userRoom)
+                            @php
+                            $alreadyAdded = \App\Models\Room_content::where('room_id', $userRoom->id)
+                            ->where('content_id', $pdf->id)
+                            ->where('content_type', 2)
+                            ->exists();
+                            @endphp
+
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ $userRoom->name }}</strong>
+                                    <small class="text-muted d-block">{{ $userRoom->description }}</small>
+                                    <small class="text-muted">
+                                        {{ \App\Models\Relation_room::where('room_id', $userRoom->id)->count() }} membros
+                                    </small>
+                                </div>
+                                @if($alreadyAdded)
+                                <span class="badge bg-success">Já adicionado</span>
+                                @else
+                                <a href="{{ route('room.addPdf', [$userRoom->id, $pdf->id]) }}" class="btn btn-sm btn-primary">
+                                    Adicionar
+                                </a>
+                                @endif
+                            </div>
+                            @endforeach
+                            @else
+                            <div class="text-center py-3">
+                                <i class="bi bi-house-door text-muted" style="font-size: 2rem;"></i>
+                                <p class="text-muted mt-2">Você ainda não participa de nenhuma sala.</p>
+                                <p class="text-muted">Crie uma nova sala para adicionar este PDF.</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- Aba Criar Nova Sala -->
+                    <div class="tab-pane fade" id="create-room" role="tabpanel">
+                        <form action="{{ route('room.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="roomName" class="form-label">Nome da Sala</label>
+                                <input type="text" class="form-control" id="roomName" name="name" placeholder="Ex: Estudos de {{ $pdf->name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="roomDescription" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="roomDescription" name="description" rows="3" placeholder="Descreva o objetivo da sala..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="roomPassword" class="form-label">Senha (opcional)</label>
+                                <input type="password" class="form-control" id="roomPassword" name="password" placeholder="Se a sala for privada">
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Após criar a sala, você poderá adicionar este PDF automaticamente.
+                            </div>
+                            <button type="submit" class="btn btn-primary">Criar Sala</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
