@@ -1,80 +1,64 @@
-    /* Estilos para badges de cargo */
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-    }
+.room-card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
-    .badge.bg-danger {
-        background-color: #dc3545 !important;
-    }
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
 
-    .badge.bg-warning {
-        background-color: #ffc107 !important;
-        color: #000 !important;
-    }
+.room-card-header {
+    height: 120px;
+    background: linear-gradient(135deg, #0f4c81, #1a5b96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
 
-    .badge.bg-secondary {
-        background-color: #6c757d !important;
-    }
+.room-card-header .icon {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.8);
+}
 
-    /* Estilos para o menu dropdown */
-    .dropdown-menu {
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border: 1px solid #e9ecef;
-    }
+.room-card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
 
-    .dropdown-item {
-        padding: 0.5rem 1rem;
-        transition: all 0.2s ease;
-    }
+.room-card-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
 
-    .dropdown-item:hover {
-        background-color: #f8f9fa;
-    }
+.room-card-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
 
-    .dropdown-item.text-danger:hover {
-        background-color: #f8d7da;
-    }
+.room-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
 
-    /* Estilos para os itens da lista de membros */
-    .list-group-item {
-        border: 1px solid #e9ecef;
-        transition: all 0.2s ease;
-    }
-
-    .list-group-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    /* Estilos para o botão de remoção */
-    .btn-outline-danger {
-        border-color: #dc3545;
-        color: #dc3545;
-        transition: all 0.2s ease;
-    }
-
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        border-color: #dc3545;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-    }
-
-    .btn-outline-danger:focus {
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-    }
-
-    /* Estilos para os modais */
-    .modal-content {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-header {
-        border-bottom: 1px solid #e9ecef;
-        background-color: #f8f9fa;
-        border-radius: 12px 12px 0 0;
-    }
+.room-participants {
+    font-size: 0.9rem;
+    color: #28a745;
+    font-weight: 500;
+}

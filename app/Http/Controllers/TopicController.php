@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Api;
 use Illuminate\Support\Facades\Cookie;
 use App\NotifyDiscord;
+use App\Models\Room;
 
 class TopicController extends Controller
 {
@@ -178,6 +179,13 @@ class TopicController extends Controller
             ->get();
         // dd($rooms);
 
+        // Buscar salas do usuário para o modal
+        $userRooms = Room::join('relation_rooms', 'rooms.id', '=', 'relation_rooms.room_id')
+            ->where('relation_rooms.partner_id', auth()->user()->id)
+            ->select('rooms.*')
+            ->distinct()
+            ->get();
+
         $arrayEx = [];
         foreach ($exercises as $exercise) {
             $arrayEx[] = [
@@ -192,7 +200,7 @@ class TopicController extends Controller
         $textoFormatado = $converter->convertToHtml($data_topic->about);
         $topicFormatado = $converter->convertToHtml($data_topic->topics);
 
-        return view('topics.topic_view', ['texto' => $textoFormatado, 'data_topic' => $data_topic, 'arrayEx' => $arrayEx, 'materials' => $materials, 'topicFormatado' => $topicFormatado, 'parceiros' => $parceiros, 'anotacoes' => $anotacoes]);
+        return view('topics.topic_view', ['texto' => $textoFormatado, 'data_topic' => $data_topic, 'arrayEx' => $arrayEx, 'materials' => $materials, 'topicFormatado' => $topicFormatado, 'parceiros' => $parceiros, 'anotacoes' => $anotacoes, 'rooms' => $rooms, 'userRooms' => $userRooms]);
     }
 
     /**

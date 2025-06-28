@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('relations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('room_id')->constrained('room')->onDelete('cascade')->nullLable();
             $table->foreignId('topic_id')->constrained('topic_folders')->onDelete('cascade')->nullLable();
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('partner_id')->constrained('users')->onDelete('cascade');

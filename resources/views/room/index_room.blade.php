@@ -7,6 +7,7 @@ EduSearch - Salas de Estudo
 @section('style')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('css/room.css') }}">
 @endsection
 
 @section('content')
@@ -31,16 +32,18 @@ EduSearch - Salas de Estudo
     @if($rooms->count() > 0)
     @foreach($rooms as $room)
     <div class="col-lg-4 col-md-6">
-        <div class="navigation-card estudos">
-            <div class="nav-card-header">
-                <i class="bi bi-mortarboard"></i>
-                <h5>{{$room->name}}</h5>
+        <div class="room-card">
+            <div class="room-card-header">
+                <i class="bi bi-mortarboard icon"></i>
             </div>
-            <div class="nav-card-body">
-                <p>{{$room->description}}</p>
-                <span class="badge bg-success"> {{ $participantsByRoom->get($room->id, collect())->count() }} participantes </span>
-                {{-- <span class="badge bg-primary ms-2">5 online</span> --}}
-                <div class="mt-3">
+            <div class="room-card-body">
+                <h5 class="room-card-title">{{$room->name}}</h5>
+                <p class="room-card-description">{{$room->description}}</p>
+                <div class="room-card-footer">
+                    <span class="room-participants">
+                        <i class="bi bi-people-fill me-1"></i>
+                        {{ $participantsByRoom->get($room->id, collect())->count() }} participantes
+                    </span>
                     <a href="{{route('room.show',$room->id)}}" class="btn btn-outline-primary btn-sm">Entrar</a>
                 </div>
             </div>
@@ -49,11 +52,11 @@ EduSearch - Salas de Estudo
     @endforeach
     @else
     <div class="col-12">
-        <div class="text-center py-5">
-            <i class="bi bi-door-open text-muted" style="font-size: 4rem;"></i>
-            <h4 class="mt-3 text-muted">Nenhuma sala encontrada</h4>
-            <p class="text-muted">Você ainda não participa de nenhuma sala de estudo.</p>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salaModal">
+        <div class="empty-state">
+            <i class="bi bi-door-open"></i>
+            <h4>Nenhuma sala encontrada</h4>
+            <p>Você ainda não participa de nenhuma sala de estudo.</p>
+            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#salaModal">
                 <i class="bi bi-plus-circle me-2"></i>Criar sua primeira sala
             </button>
         </div>
@@ -63,7 +66,7 @@ EduSearch - Salas de Estudo
 
 <!-- Modal Criar/Entrar em Sala -->
 <div class="modal fade" id="salaModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
@@ -88,9 +91,9 @@ EduSearch - Salas de Estudo
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ação</label>
-                        <select class="form-select">
-                            <option selected>Criar nova sala</option>
-                            <option>Entrar em sala existente</option>
+                        <select class="form-select" name="action">
+                            <option value="create" selected>Criar nova sala</option>
+                            <option value="join">Entrar em sala existente</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Confirmar</button>

@@ -52,12 +52,13 @@ def new_topic_folder(topico):
 
 
 def resumo_topico(topico):
+
     prompt_topic = PromptTemplate(
         input_variables=['topico'],
         template='''Você é um professor experiente de {topico} com mais de 15 anos em sala de aula.
         Faça um resumo objetivo sobre {topico}
         - Tópicos essenciais para um estudante dominar
-        - Aplicações práticas quando relevante
+        - Aplicações qpráticas uando relevante
 
         Seja direto e use linguagem clara. Evite introduções desnecessárias ou conclusões. Organize o conteúdo em tópicos concisos para facilitar a compreensão.
         Sem introduções ou despedidas. Apenas o conteúdo solicitado em formato conciso e direto.
@@ -351,6 +352,18 @@ def extract_pdf_text(user_id,title,chat=False):
             "text": pdf_items['text']
     }
 
+def summary_pdf(text):
+    prompt_summary = PromptTemplate(
+        input_variables=["text"],
+        template='''faça um resumo sobre o pdf de ate 6 palavras do conteúdo abaixo:
+        {text}
+        Desejo apenas um resumo de 6 palavras do conteúdo do PDF, nada mais.
+        '''
+    )
+    chain_summary = prompt_summary | llm | StrOutputParser()
+    summary_response = chain_summary.invoke({'text': text})
+    return summary_response
+
 
 def content_pdf(text):
     prompt_content = PromptTemplate(
@@ -373,17 +386,6 @@ def content_pdf(text):
     content_response = chain.invoke({'text': text})
     return content_response
 
-def summary_pdf(text):
-    prompt_summary = PromptTemplate(
-        input_variables=["text"],
-        template='''faça um resumo sobre o pdf de ate 6 palavras do conteúdo abaixo:
-        {text}
-        Desejo apenas um resumo de 6 palavras do conteúdo do PDF, nada mais.
-        '''
-    )
-    chain_summary = prompt_summary | llm | StrOutputParser()
-    summary_response = chain_summary.invoke({'text': text})
-    return summary_response
 
 def language_pdf(text):
     prompt_language = PromptTemplate(
@@ -398,11 +400,12 @@ def language_pdf(text):
     language_response = chain_language.invoke({'text': text})
     return language_response
 
+
 @app.get('/new_pdf_folder/{user_id}/{title}')
 async def new_pdf_folder(user_id,title):
     data_pdf = extract_pdf_text(user_id,title)
-    content = content_pdf(data_pdf['text'])
     summary = summary_pdf(data_pdf['text'])
+    content = content_pdf(data_pdf['text'])
     language = language_pdf(data_pdf['text'])
     print(120*"-")
     print(content)

@@ -10,7 +10,7 @@ class NotifyDiscord
     {
         $username = 'arthur';
         $password = '118885dd75d966da67c57e0719a79609d1';
-        $baseUrl = 'https://bb39-2804-14d-32a3-5184-3b97-16b3-7114-95d4.ngrok-free.app';
+        $baseUrl = 'https://6294-2804-14d-32a3-5184-d6e-e06f-7e71-b9de.ngrok-free.app';
         $cookieJar = tempnam(sys_get_temp_dir(), 'jenkins_cookies_');
 
         // Passo 1: Obter o crumb

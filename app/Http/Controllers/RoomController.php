@@ -87,8 +87,25 @@ class RoomController extends Controller
             ->get();
         // dd($participants);
 
-        $topics = Topic_folder::where('user_id', auth()->user()->id)->get();
-        $pdfs = Pdf_folder::where('user_id', auth()->user()->id)->get();
+        // Buscar tópicos do usuário que NÃO estão relacionados à sala
+        $topics = Topic_folder::where('user_id', auth()->user()->id)
+            ->whereNotIn('id', function ($query) use ($room) {
+                $query->select('content_id')
+                    ->from('room_contents')
+                    ->where('room_id', $room->id)
+                    ->where('content_type', 1);
+            })
+            ->get();
+
+        // Buscar PDFs do usuário que NÃO estão relacionados à sala
+        $pdfs = Pdf_folder::where('user_id', auth()->user()->id)
+            ->whereNotIn('id', function ($query) use ($room) {
+                $query->select('content_id')
+                    ->from('room_contents')
+                    ->where('room_id', $room->id)
+                    ->where('content_type', 2);
+            })
+            ->get();
 
         $related_topics = Room_content::join('topic_folders', 'room_contents.content_id', '=', 'topic_folders.id')
             ->join('users', 'topic_folders.user_id', '=', 'users.id')
@@ -195,6 +212,16 @@ class RoomController extends Controller
             return redirect()->back()->withError('Tópico não encontrado.');
         }
 
+        // Verificar se o tópico já está relacionado à sala
+        $existingRelation = Room_content::where('room_id', $room_id)
+            ->where('content_id', $topic_id)
+            ->where('content_type', 1)
+            ->exists();
+
+        if ($existingRelation) {
+            return redirect()->back()->withError('Este tópico já está relacionado à sala.');
+        }
+
         if (Topic_folder::where('id', $topic_id)->where('user_id', auth()->user()->id)->exists()) {
             Room_content::create([
                 'user_id' => auth()->user()->id,
@@ -224,6 +251,16 @@ class RoomController extends Controller
     {
         if (Pdf_folder::where('id', $pdf_id)->doesntExist()) {
             return redirect()->back()->withError('PDF não encontrado.');
+        }
+
+        // Verificar se o PDF já está relacionado à sala
+        $existingRelation = Room_content::where('room_id', $room_id)
+            ->where('content_id', $pdf_id)
+            ->where('content_type', 2)
+            ->exists();
+
+        if ($existingRelation) {
+            return redirect()->back()->withError('Este PDF já está relacionado à sala.');
         }
 
         if (Pdf_folder::where('id', $pdf_id)->where('user_id', auth()->user()->id)->exists()) {

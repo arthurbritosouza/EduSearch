@@ -252,3 +252,99 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Adicionar Tópico a Sala -->
+<div class="modal fade" id="addTopicToRoomModal" tabindex="-1" aria-labelledby="addTopicToRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTopicToRoomModalLabel">
+                    <i class="bi bi-house-door me-2"></i>Adicionar {{ $data_topic->name }} a Sala
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Navegação por Abas no Modal -->
+                <ul class="nav nav-tabs" id="roomTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="my-rooms-tab" data-bs-toggle="tab" data-bs-target="#my-rooms" type="button" role="tab">
+                            Minhas Salas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="create-room-tab" data-bs-toggle="tab" data-bs-target="#create-room" type="button" role="tab">
+                            Criar Nova Sala
+                        </button>
+                    </li>
+                </ul>
+                <!-- Conteúdo das Abas -->
+                <div class="tab-content mt-3" id="roomTabsContent">
+                    <!-- Aba Minhas Salas -->
+                    <div class="tab-pane fade show active" id="my-rooms" role="tabpanel">
+                        <div class="list-group">
+                            @if($userRooms->count() > 0)
+                            @foreach($userRooms as $userRoom)
+                            @php
+                            $alreadyAdded = \App\Models\Room_content::where('room_id', $userRoom->id)
+                            ->where('content_id', $data_topic->id)
+                            ->where('content_type', 1)
+                            ->exists();
+                            @endphp
+
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ $userRoom->name }}</strong>
+                                    <small class="text-muted d-block">{{ $userRoom->description }}</small>
+                                    <small class="text-muted">
+                                        {{ \App\Models\Relation_room::where('room_id', $userRoom->id)->count() }} membros
+                                    </small>
+                                </div>
+                                @if($alreadyAdded)
+                                <span class="badge bg-success">Já adicionado</span>
+                                @else
+                                <a href="{{ route('room.addTopic', [$userRoom->id, $data_topic->id]) }}" class="btn btn-sm btn-primary">
+                                    Adicionar
+                                </a>
+                                @endif
+                            </div>
+                            @endforeach
+                            @else
+                            <div class="text-center py-3">
+                                <i class="bi bi-house-door text-muted" style="font-size: 2rem;"></i>
+                                <p class="text-muted mt-2">Você ainda não participa de nenhuma sala.</p>
+                                <p class="text-muted">Crie uma nova sala para adicionar este tópico.</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- Aba Criar Nova Sala -->
+                    <div class="tab-pane fade" id="create-room" role="tabpanel">
+                        <form action="{{ route('room.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="roomName" class="form-label">Nome da Sala</label>
+                                <input type="text" class="form-control" id="roomName" name="name" placeholder="Ex: Estudos de {{ $data_topic->name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="roomDescription" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="roomDescription" name="description" rows="3" placeholder="Descreva o objetivo da sala..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="roomPassword" class="form-label">Senha (opcional)</label>
+                                <input type="password" class="form-control" id="roomPassword" name="password" placeholder="Se a sala for privada">
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Após criar a sala, você poderá adicionar este tópico automaticamente.
+                            </div>
+                            <button type="submit" class="btn btn-primary">Criar Sala</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>

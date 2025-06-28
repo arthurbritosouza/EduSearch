@@ -9,6 +9,7 @@ use App\Models\Pdf_folder;
 use League\CommonMark\CommonMarkConverter;
 use App\Api;
 use App\Models\Room_content;
+use App\Models\Room;
 use App\NotifyDiscord;
 
 class PdfController extends Controller
@@ -72,24 +73,38 @@ class PdfController extends Controller
 
     public function show(Pdf_folder $pdf)
     {
-        $pdf = Pdf_folder::leftJoin('room_contents', function ($join) {
-            $join->on('pdf_folders.id', '=', 'room_contents.content_id')
-                ->where('room_contents.content_type', 2);
-        })
-            ->leftJoin('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
-            // ->where('user_id', auth()->user()->id)
-            ->select('pdf_folders.*')
-            ->first();
-        // dd($pdf);
+        // Verificar se o usuário tem acesso ao PDF
+        if ($pdf->user_id != auth()->user()->id) {
+            // Verificar se o PDF está em alguma sala onde o usuário é membro
+            $hasAccess = Room_content::join('relation_rooms', 'room_contents.room_id', '=', 'relation_rooms.room_id')
+                ->where('room_contents.content_id', $pdf->id)
+                ->where('room_contents.content_type', 2)
+                ->where('relation_rooms.partner_id', auth()->user()->id)
+                ->exists();
 
-        if (!$pdf) {
-            return redirect()->back()->withErrors('Você não tem permissão para acessar este PDF.');
+            if (!$hasAccess) {
+                return redirect()->back()->withErrors('Você não tem permissão para acessar este PDF.');
+            }
         }
 
+        // Buscar salas onde o PDF está relacionado
+        $rooms = Room_content::join('rooms', 'room_contents.room_id', '=', 'rooms.id')
+            ->where('room_contents.content_id', $pdf->id)
+            ->where('room_contents.content_type', 2)
+            ->select('rooms.*')
+            ->distinct()
+            ->get();
+
+        // Buscar salas do usuário para o modal
+        $userRooms = Room::join('relation_rooms', 'rooms.id', '=', 'relation_rooms.room_id')
+            ->where('relation_rooms.partner_id', auth()->user()->id)
+            ->select('rooms.*')
+            ->distinct()
+            ->get();
 
         $converter = new CommonMarkConverter();
         $content = $converter->convertToHtml($pdf->content);
-        return view('pdfs.pdf_view', compact('pdf', 'content'));
+        return view('pdfs.pdf_view', compact('pdf', 'content', 'rooms', 'userRooms'));
     }
 
     public function edit(Pdf_folder $pdf)

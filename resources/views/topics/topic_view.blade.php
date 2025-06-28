@@ -561,86 +561,44 @@ EduSearch - {{ $data_topic->name}}
                     <h3>Salas de Estudo</h3>
                     <p>Explore salas de discussão e grupos de estudo relacionados a {{ $data_topic->name }}</p>
                 </div>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-                    <i class="bi bi-plus-circle me-2"></i>Criar Nova Sala
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTopicToRoomModal">
+                    <i class="bi bi-plus-circle me-2"></i>Adicionar a Sala
                 </button>
             </div>
 
+            @if($rooms->count() > 0)
             <div class="rooms-grid">
-                {{-- Dados Estáticos para Visualização --}}
+                @foreach($rooms as $room)
                 <div class="room-card">
                     <div class="room-icon">
                         <i class="bi bi-chat-dots-fill"></i>
                     </div>
                     <div class="room-info">
-                        <h5 class="room-name">Sala de Estudo: Tópico X</h5>
-                        <p class="room-description">Discussão aprofundada sobre conceitos fundamentais de {{ $data_topic->name }}. Ideal para iniciantes.</p>
+                        <h5 class="room-name">{{ $room->name }}</h5>
+                        <p class="room-description">{{ $room->description }}</p>
                         <span class="room-meta">
-                            <i class="bi bi-people"></i> 15 Membros
+                            <i class="bi bi-people"></i>
+                            {{ \App\Models\Relation_room::where('room_id', $room->id)->count() }} Membros
                         </span>
                     </div>
                     <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
+                        <a href="{{ route('room.show', $room->id) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
                         </a>
                     </div>
                 </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Preparação para Provas</h5>
-                        <p class="room-description">Grupo focado em resolver exercícios e revisar para as próximas avaliações. Nível intermediário.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 23 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Desafios Avançados</h5>
-                        <p class="room-description">Espaço para discussão de problemas complexos e tópicos avançados em {{ $data_topic->name }}.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 8 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-
-                <div class="room-card">
-                    <div class="room-icon">
-                        <i class="bi bi-chat-dots-fill"></i>
-                    </div>
-                    <div class="room-info">
-                        <h5 class="room-name">Recursos e Dicas</h5>
-                        <p class="room-description">Compartilhamento de materiais adicionais, artigos e dicas de estudo para o tópico.</p>
-                        <span class="room-meta">
-                            <i class="bi bi-people"></i> 30 Membros
-                        </span>
-                    </div>
-                    <div class="room-actions">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
-                        </a>
-                    </div>
-                </div>
-                {{-- Fim dos Dados Estáticos --}}
+                @endforeach
             </div>
+            @else
+            <div class="text-center py-5">
+                <i class="bi bi-house-door text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3 text-muted">Nenhuma sala encontrada</h4>
+                <p class="text-muted">Este tópico ainda não foi adicionado a nenhuma sala de estudo.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTopicToRoomModal">
+                    <i class="bi bi-plus-circle me-2"></i>Adicionar a Sala
+                </button>
+            </div>
+            @endif
         </div>
     </div>
 
