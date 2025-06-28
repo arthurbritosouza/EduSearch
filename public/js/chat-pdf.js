@@ -13,10 +13,10 @@ function processText(text) {
 // Função para escapar HTML (para mensagens do usuário)
 function escapeHtml(text) {
     return text.replace(/&/g, "&amp;")
-               .replace(/</g, "&lt;")
-               .replace(/>/g, "&gt;")
-               .replace(/"/g, "&quot;")
-               .replace(/'/g, "&#039;");
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Função para obter hora atual formatada
@@ -118,7 +118,7 @@ function clearChat() {
 }
 
 // Inicialização após DOM carregado
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Sidebar toggle
     const sidebarCollapse = document.getElementById('sidebarCollapse');
     const sidebar = document.getElementById('sidebar');
@@ -126,13 +126,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const overlay = document.getElementById('overlay');
 
     if (sidebarCollapse && sidebar && mainContent && overlay) {
-        sidebarCollapse.addEventListener('click', function() {
+        sidebarCollapse.addEventListener('click', function () {
             sidebar.classList.toggle('active');
             mainContent.classList.toggle('active');
             overlay.classList.toggle('active');
         });
 
-        overlay.addEventListener('click', function() {
+        overlay.addEventListener('click', function () {
             sidebar.classList.remove('active');
             mainContent.classList.remove('active');
             overlay.classList.remove('active');
@@ -181,12 +181,3 @@ window.askQuestion = (question) => {
         sendMessage();
     }
 };
-
-function switchToTab(tabId) {
-    const tab = document.querySelector(`#${tabId}`);
-    if (tab) {
-        const tabInstance = new bootstrap.Tab(tab);
-        tabInstance.show();
-    }
-}
-
